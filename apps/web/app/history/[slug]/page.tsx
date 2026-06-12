@@ -195,9 +195,9 @@ export default async function GenerationDetailPage({
         </section>
 
         {/* Timeline */}
-        <section className="py-16 md:py-20 bg-card/50">
+        <section className="py-10 md:py-12 bg-card/50">
           <div className="container mx-auto px-4">
-            <h2 className="font-display text-4xl text-foreground text-center mb-12">
+            <h2 className="font-display text-4xl text-foreground text-center mb-8">
               History &amp; Evolution
             </h2>
             <div className="max-w-3xl mx-auto space-y-8">
@@ -219,7 +219,7 @@ export default async function GenerationDetailPage({
 
         {/* Photo Gallery */}
         {galleryImages.length > 0 && (
-          <section className="py-16 md:py-20">
+          <section className="py-10 md:py-12">
             <div className="container mx-auto px-4">
               <h2 className="font-display text-4xl text-foreground text-center mb-8">Gallery</h2>
               <div className="max-w-4xl mx-auto">
@@ -230,9 +230,9 @@ export default async function GenerationDetailPage({
         )}
 
         {/* Description & Stats */}
-        <section className="py-16 md:py-20 bg-card/30">
+        <section className="py-10 md:py-12 bg-card/30">
           <div className="container mx-auto px-4">
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto text-center leading-relaxed mb-16">
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto text-center leading-relaxed mb-8">
               {generation.description}
             </p>
 
@@ -262,9 +262,9 @@ export default async function GenerationDetailPage({
         </section>
 
         {/* Notable Models */}
-        <section className="py-16 md:py-20">
+        <section className="py-10 md:py-12">
           <div className="container mx-auto px-4">
-            <h2 className="font-display text-4xl text-foreground text-center mb-12">
+            <h2 className="font-display text-4xl text-foreground text-center mb-8">
               Notable Models
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
@@ -281,9 +281,9 @@ export default async function GenerationDetailPage({
 
         {/* Production Stats */}
         {productionStats && (
-          <section className="py-16 md:py-20 bg-card/30">
+          <section className="py-10 md:py-12 bg-card/30">
             <div className="container mx-auto px-4">
-              <h2 className="font-display text-4xl text-foreground text-center mb-12">
+              <h2 className="font-display text-4xl text-foreground text-center mb-8">
                 Production Statistics
               </h2>
               <ProductionStatsSection stats={productionStats} generationName={generation.name} />
@@ -292,7 +292,7 @@ export default async function GenerationDetailPage({
         )}
 
         {/* Browse Inventory CTA */}
-        <section className="py-16 bg-card/50">
+        <section className="py-10 bg-card/50">
           <div className="container mx-auto px-4 text-center">
             <h2 className="font-display text-3xl md:text-4xl text-foreground mb-4">
               Find Your {generation.name}
@@ -309,7 +309,7 @@ export default async function GenerationDetailPage({
         </section>
 
         {/* Prev / Next navigation */}
-        <section className="py-12 border-t border-border">
+        <section className="py-8 border-t border-border">
           <div className="container mx-auto px-4">
             <div className="flex justify-between items-center">
               {prevGen ? (
