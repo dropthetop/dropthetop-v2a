@@ -60,7 +60,7 @@ export default async function HistoryPage() {
     imageMap[img.generation_id] = img.image_url;
   });
 
-  const pageHeroImageUrl = imageMap["history-page"] ?? null;
+  const pageHeroImageUrl = imageMap["history-page"] ?? "/heroes/history.jpg";
 
   return (
     <>

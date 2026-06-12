@@ -106,7 +106,7 @@ export default async function HomePage() {
       .limit(8),
   ]);
 
-  const heroImageUrl = heroResult.data?.image_url ?? null;
+  const heroImageUrl = heroResult.data?.image_url ?? "/heroes/home.jpg";
   const activeCount = countResult.count ?? 0;
   const featured = (featuredResult.data ?? []) as unknown as ListingCardData[];
 
