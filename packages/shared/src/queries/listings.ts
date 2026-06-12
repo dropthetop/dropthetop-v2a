@@ -113,7 +113,8 @@ export async function getListings(
   query = (query as any).range(from, from + pageSize - 1);
 
   const { data, error, count } = await (query as any);
-  if (error) throw error;
+  // PGRST103 = requested range not satisfiable (page beyond available rows)
+  if (error && (error as any).code !== "PGRST103") throw error;
   return { listings: data ?? [], total: count ?? 0, page, pageSize };
 }
 
