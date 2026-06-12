@@ -96,7 +96,6 @@ export default async function GenerationDetailPage({
     dbHeroUrl ??
     GENERATION_HISTORY_IMAGES[generation.id.toLowerCase()] ??
     generation.heroImage;
-  const isLocalHero = !dbHeroUrl;
   const galleryImages =
     dbImages && dbImages.filter((img) => !img.is_hero).length > 0
       ? dbImages.filter((img) => !img.is_hero).map((img) => img.image_url)
@@ -137,119 +136,62 @@ export default async function GenerationDetailPage({
         <div style={{ height: "calc(4rem + var(--safe-area-top, 0px))" }} />
 
         {/* Hero */}
-        {isLocalHero ? (
-          // Fallback: natural-size image with gradient fade + content below
-          <div>
-            <div className="relative w-full">
-              <img
-                src={heroImageUrl}
-                alt={generation.name}
-                className="w-full h-auto block"
-              />
-              {/* Gradient fade into page background */}
-              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
-              {/* Back link */}
-              <Link
-                href="/history"
-                className="absolute left-4 md:left-8 z-20 flex items-center gap-2 px-4 py-2 bg-background/80 backdrop-blur-sm rounded-full text-foreground hover:bg-background transition-colors"
-                style={{ top: "1rem" }}
-              >
-                <ArrowLeft className="w-4 h-4" />
-                All Generations
-              </Link>
-              {/* Prev / Next arrow buttons */}
-              <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex justify-between px-4">
-                {prevGen ? (
-                  <Link
-                    href={buildGenerationUrl(prevGen.id)}
-                    className="w-12 h-12 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
-                    aria-label={`Previous generation: ${prevGen.name}`}
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                  </Link>
-                ) : (
-                  <div />
-                )}
-                {nextGen && (
-                  <Link
-                    href={buildGenerationUrl(nextGen.id)}
-                    className="w-12 h-12 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
-                    aria-label={`Next generation: ${nextGen.name}`}
-                  >
-                    <ArrowLeft className="w-5 h-5 rotate-180" />
-                  </Link>
-                )}
-              </div>
-            </div>
-            <div className="container mx-auto px-4 -mt-16 relative z-10 pb-6">
-              <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground text-sm font-semibold rounded mb-4">
-                {generation.years}
-              </span>
-              <h1 className="font-display text-5xl md:text-7xl text-foreground mb-3">
-                {generation.name}
-              </h1>
-              <p className="text-xl text-muted-foreground">{generation.tagline}</p>
-            </div>
+        <section className="relative h-[70vh] flex items-end overflow-hidden">
+          <div className="absolute inset-0">
+            <Image
+              src={heroImageUrl}
+              alt={generation.name}
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="hero-overlay absolute inset-0" />
           </div>
-        ) : (
-          // DB image: full-bleed hero with overlay
-          <section className="relative h-[70vh] flex items-end overflow-hidden">
-            <div className="absolute inset-0">
-              <Image
-                src={heroImageUrl}
-                alt={generation.name}
-                fill
-                className="object-cover"
-                priority
-              />
-              <div className="hero-overlay absolute inset-0" />
-            </div>
 
-            {/* Back link */}
-            <Link
-              href="/history"
-              className="absolute left-4 md:left-8 z-20 flex items-center gap-2 px-4 py-2 bg-background/80 backdrop-blur-sm rounded-full text-foreground hover:bg-background transition-colors"
-              style={{ top: "calc(5rem + var(--safe-area-top, 0px))" }}
-            >
-              <ArrowLeft className="w-4 h-4" />
-              All Generations
-            </Link>
+          {/* Back link */}
+          <Link
+            href="/history"
+            className="absolute left-4 md:left-8 z-20 flex items-center gap-2 px-4 py-2 bg-background/80 backdrop-blur-sm rounded-full text-foreground hover:bg-background transition-colors"
+            style={{ top: "calc(5rem + var(--safe-area-top, 0px))" }}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            All Generations
+          </Link>
 
-            {/* Prev / Next arrow buttons */}
-            <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex justify-between px-4">
-              {prevGen ? (
-                <Link
-                  href={buildGenerationUrl(prevGen.id)}
-                  className="w-12 h-12 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
-                  aria-label={`Previous generation: ${prevGen.name}`}
-                >
-                  <ArrowLeft className="w-5 h-5" />
-                </Link>
-              ) : (
-                <div />
-              )}
-              {nextGen && (
-                <Link
-                  href={buildGenerationUrl(nextGen.id)}
-                  className="w-12 h-12 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
-                  aria-label={`Next generation: ${nextGen.name}`}
-                >
-                  <ArrowLeft className="w-5 h-5 rotate-180" />
-                </Link>
-              )}
-            </div>
+          {/* Prev / Next arrow buttons */}
+          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex justify-between px-4">
+            {prevGen ? (
+              <Link
+                href={buildGenerationUrl(prevGen.id)}
+                className="w-12 h-12 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
+                aria-label={`Previous generation: ${prevGen.name}`}
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Link>
+            ) : (
+              <div />
+            )}
+            {nextGen && (
+              <Link
+                href={buildGenerationUrl(nextGen.id)}
+                className="w-12 h-12 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center hover:bg-background transition-colors"
+                aria-label={`Next generation: ${nextGen.name}`}
+              >
+                <ArrowLeft className="w-5 h-5 rotate-180" />
+              </Link>
+            )}
+          </div>
 
-            <div className="relative z-10 container mx-auto px-4 pb-12">
-              <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground text-sm font-semibold rounded mb-4">
-                {generation.years}
-              </span>
-              <h1 className="font-display text-5xl md:text-7xl text-foreground mb-3">
-                {generation.name}
-              </h1>
-              <p className="text-xl text-muted-foreground">{generation.tagline}</p>
-            </div>
-          </section>
-        )}
+          <div className="relative z-10 container mx-auto px-4 pb-12">
+            <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground text-sm font-semibold rounded mb-4">
+              {generation.years}
+            </span>
+            <h1 className="font-display text-5xl md:text-7xl text-foreground mb-3">
+              {generation.name}
+            </h1>
+            <p className="text-xl text-muted-foreground">{generation.tagline}</p>
+          </div>
+        </section>
 
         {/* Timeline */}
         <section className="py-10 md:py-12 bg-card/50">
