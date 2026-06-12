@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Bebas_Neue, Barlow } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
+import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
 
 const bebasNeue = Bebas_Neue({
@@ -34,7 +36,12 @@ export default function RootLayout({
       className={`${bebasNeue.variable} ${barlow.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <TooltipProvider>{children}</TooltipProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            {children}
+            <Toaster richColors position="top-right" />
+          </TooltipProvider>
+        </AuthProvider>
       </body>
     </html>
   );
