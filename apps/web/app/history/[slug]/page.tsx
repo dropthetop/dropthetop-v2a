@@ -138,7 +138,7 @@ export default async function GenerationDetailPage({
 
         {/* Hero */}
         {isLocalHero ? (
-          // Fallback: natural-size image + content below
+          // Fallback: natural-size image with gradient fade + content below
           <div>
             <div className="relative w-full">
               <img
@@ -146,6 +146,8 @@ export default async function GenerationDetailPage({
                 alt={generation.name}
                 className="w-full h-auto block"
               />
+              {/* Gradient fade into page background */}
+              <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
               {/* Back link */}
               <Link
                 href="/history"
@@ -179,7 +181,7 @@ export default async function GenerationDetailPage({
                 )}
               </div>
             </div>
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-4 -mt-16 relative z-10 pb-6">
               <span className="inline-block px-4 py-1.5 bg-primary text-primary-foreground text-sm font-semibold rounded mb-4">
                 {generation.years}
               </span>
