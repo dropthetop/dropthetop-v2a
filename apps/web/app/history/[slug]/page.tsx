@@ -137,7 +137,7 @@ export default async function GenerationDetailPage({
         <div style={{ height: "calc(4rem + var(--safe-area-top, 0px))" }} />
 
         {/* Hero */}
-        <section className={`relative flex items-end overflow-hidden ${isLocalHero ? "h-[65vh]" : "h-[70vh]"}`}>
+        <section className={`relative flex items-end overflow-hidden ${isLocalHero ? "h-[40vh]" : "h-[70vh]"}`}>
           <div className="absolute inset-0">
             <Image
               src={heroImageUrl}
