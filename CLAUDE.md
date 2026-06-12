@@ -30,3 +30,6 @@ Everything in `packages/shared` must be importable by a React Native (Expo) app.
 
 ## v1 source of truth
 Feature conversion reads from v1 (`/Users/toddheemsoth/Documents/dropthetop-owned`) directly by absolute path — sibling folders on disk. No cloning, no pasting. Do not modify v1.
+
+## Conversion plan
+`CONVERSION_PLAN.md` (repo root) is the source of truth for phase status, constraints, and key decisions. Update it — moving phases from Remaining to Completed and advancing the NEXT marker — when each phase ships.
