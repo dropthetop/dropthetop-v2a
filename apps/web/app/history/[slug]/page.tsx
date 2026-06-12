@@ -143,7 +143,7 @@ export default async function GenerationDetailPage({
               src={heroImageUrl}
               alt={generation.name}
               fill
-              className="object-cover"
+              className={isLocalHero ? "object-contain" : "object-cover"}
               priority
             />
             <div className="hero-overlay absolute inset-0" />
