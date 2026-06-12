@@ -15,12 +15,22 @@ Next.js App Router + TypeScript monorepo. This is the go-forward web app. A Reac
 ## SSR requirement (non-negotiable)
 Public, SEO-critical pages (listings, inventory, listing detail, vehicle/generation history, and news) must use real SSR via Server Components and `generateMetadata`. Never client-fetch-plus-inject for content that needs to be indexed. This is the primary reason Expo Router for web was abandoned.
 
+Every public page must:
+- Render full content in `view-source` — no JS-filled blank divs
+- Have a `generateMetadata` export
+
 ## packages/shared discipline
 Everything in `packages/shared` must be importable by a React Native (Expo) app. That means:
 - No `next/*` imports
 - No `window`, `document`, or other DOM globals
 - No web-only packages (e.g. no `next-auth`)
 - Env vars are injected by the consumer (`apps/web`), not accessed inside `packages/shared`
+
+## Data access discipline
+All Supabase queries go through `packages/shared/src/data/` — no inline queries in page or component files.
+
+## Branch workflow
+All work on `develop`. `main` is the stable deployable baseline — only merge when a feature is ship-ready.
 
 ## Rejected paths — do not revisit without strong new reason
 - **Expo Router for web** — abandoned. Could not deliver real SSR needed for SEO.
@@ -29,7 +39,7 @@ Everything in `packages/shared` must be importable by a React Native (Expo) app.
 - **Mobile as part of this monorepo** — mobile will be a separate Expo app that imports `packages/shared` as a dependency. It does not live in `apps/`.
 
 ## v1 source of truth
-Feature conversion reads from v1 (`/Users/toddheemsoth/Documents/dropthetop-owned`) directly by absolute path — sibling folders on disk. No cloning, no pasting. Do not modify v1.
+Feature conversion reads from v1 (`/Users/toddheemsoth/Documents/dropthetop-owned`) directly by absolute path — sibling folders on disk. No cloning, no pasting. Do not modify v1. Never read from or copy v2 (`dropthetop-v2`).
 
 ## Conversion plan
-`CONVERSION_PLAN.md` (repo root) is the source of truth for phase status, constraints, and key decisions. Update it — moving phases from Remaining to Completed and advancing the NEXT marker — when each phase ships.
+`CONVERSION_PLAN.md` (repo root) is the source of truth for phase status and conversion-specific decisions. Update it — moving phases from Remaining to Completed and advancing the NEXT marker — when each phase ships.

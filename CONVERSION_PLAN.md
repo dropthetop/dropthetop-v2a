@@ -36,21 +36,8 @@ Deferred — revisit after core conversion is complete and live.
 
 ---
 
-## Hard-constraint checklist
-Must hold for every phase.
-
-- [ ] Public pages render full content in `view-source` — real SSR, no JS-filled blank divs
-- [ ] `generateMetadata` on every public page
-- [ ] No inline Supabase queries in page files — all DB access through `packages/shared/src/data/`
-- [ ] No `next/*` imports in `packages/shared`
-- [ ] No DB schema changes without explicit user approval
-
----
-
-## Key decisions
+## Conversion-specific decisions
 
 - **Server-side pagination** (`?page=N` in URL), not infinite scroll
 - **Edge functions stay in Supabase** — migrate opportunistically only, not proactively
 - **Anonymous session tracking deferred** to post-launch
-- **Source is v1** (`/Users/toddheemsoth/Documents/dropthetop-owned`); never read from or copy v2
-- **All work on `develop`**; `main` is the stable deployable baseline
