@@ -15,7 +15,7 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: BRAND.name,
-  description: `The ${TAGLINES.short.toLowerCase()} for buying and selling Corvettes`,
+  description: `${TAGLINES.short} — the premier marketplace for buying and selling Corvettes`,
   url: URLS.website,
   logo: `${URLS.website}/og-image.png`,
   contactPoint: {
