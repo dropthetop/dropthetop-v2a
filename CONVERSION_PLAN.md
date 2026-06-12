@@ -13,11 +13,11 @@
 - **Phase 6** — History pages (`generateStaticParams` for all 8 generations, generation detail with gallery + production stats)
 - ✅ **SEO milestone checkpoint PASSED** and independently verified — confirmed working on iMessage, Facebook, LinkedIn, and OpenGraph.
 - **Phase 7** — News page (SSR + ItemList JSON-LD, client-side search/filter/sort/bookmarks)
+- **Phase 8** — Static/legal pages (About/Mission, Privacy, Terms) + custom 404
 
 ### Remaining
 
-- **Phase 8** — Static/legal pages (About, Mission, Privacy, Terms) + custom 404 ← **NEXT**
-- **Phase 9** — Seller & Dealer pages (public profiles, MakeOffer + ContactSeller dialogs on listing detail)
+- **Phase 9** — Seller & Dealer pages (public profiles, MakeOffer + ContactSeller dialogs on listing detail) ← **NEXT**
 - **Phase 10** — Dashboard + Create/Edit listing (image upload to Supabase Storage)
 - **Phase 11** — Forum (index, thread view, bookmarks)
 - **Phase 12** — Admin section (+ Year Sales pricing that feeds history page live price cards)
