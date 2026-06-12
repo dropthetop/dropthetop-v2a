@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { SlidersHorizontal, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { SlidersHorizontal, X, ChevronLeft, ChevronRight, LayoutGrid, Rows3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,7 @@ import { createClient } from "@/lib/supabase/client";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { generations } from "@dropthetop/shared";
 import { GENERATION_CARD_IMAGES } from "@/lib/generation-images";
+import { GenerationGroupedView } from "@/components/inventory/GenerationGroupedView";
 import type { ListingCardData } from "@dropthetop/shared";
 
 export interface ParsedFilters {
@@ -37,6 +38,7 @@ export interface ParsedFilters {
   sellerType: string;
   listingType: string;
   page: number;
+  grouped: boolean;
 }
 
 interface InventoryClientProps {
@@ -112,7 +114,8 @@ function buildParams(f: ParsedFilters): string {
   if (f.transmission) p.set("transmission", f.transmission);
   if (f.sellerType) p.set("sellerType", f.sellerType);
   if (f.listingType) p.set("listingType", f.listingType);
-  if (f.page > 1) p.set("page", String(f.page));
+  if (!f.grouped && f.page > 1) p.set("page", String(f.page));
+  if (f.grouped) p.set("grouped", "true");
   return p.toString();
 }
 
@@ -550,13 +553,35 @@ export function InventoryClient({
             </div>
           </div>
 
-          {/* Results count */}
-          <p className="text-muted-foreground mb-4">
-            {total} vehicle{total !== 1 ? "s" : ""} found
-            {totalPages > 1 && ` — page ${filters.page} of ${totalPages}`}
-          </p>
+          {/* Results count + view toggle */}
+          <div className="flex items-center justify-between mb-4">
+            <p className="text-muted-foreground">
+              {total} vehicle{total !== 1 ? "s" : ""} found
+              {!filters.grouped && totalPages > 1 && ` — page ${filters.page} of ${totalPages}`}
+            </p>
+            <Button
+              variant={filters.grouped ? "default" : "outline"}
+              size="sm"
+              onClick={() => push({ grouped: !filters.grouped, page: 1 }, false)}
+              className="gap-2"
+            >
+              {filters.grouped ? (
+                <>
+                  <LayoutGrid className="w-4 h-4" />
+                  <span className="hidden sm:inline">Grid View</span>
+                  <span className="sm:hidden">Grid</span>
+                </>
+              ) : (
+                <>
+                  <Rows3 className="w-4 h-4" />
+                  <span className="hidden sm:inline">View by Generation</span>
+                  <span className="sm:hidden">Generation</span>
+                </>
+              )}
+            </Button>
+          </div>
 
-          {/* Listing grid */}
+          {/* Listings */}
           {listings.length === 0 ? (
             <div className="text-center py-24">
               <p className="text-muted-foreground text-lg mb-4">
@@ -568,6 +593,14 @@ export function InventoryClient({
                 </Button>
               )}
             </div>
+          ) : filters.grouped ? (
+            <GenerationGroupedView
+              listings={listings}
+              isFavorite={isFavorite}
+              toggleFavorite={toggleFavorite}
+              userId={userId}
+              linkSuffix={linkSuffix}
+            />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {listings.map((listing) => {
@@ -617,8 +650,8 @@ export function InventoryClient({
             </div>
           )}
 
-          {/* Pagination */}
-          {totalPages > 1 && (
+          {/* Pagination — hidden in grouped mode */}
+          {!filters.grouped && totalPages > 1 && (
             <div className="flex items-center justify-center gap-4 mt-10">
               <Button
                 variant="outline"

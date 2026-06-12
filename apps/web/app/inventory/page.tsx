@@ -31,6 +31,7 @@ function parseFilters(sp: Record<string, string | undefined>): ParsedFilters {
     sellerType: sp.sellerType ?? "",
     listingType: sp.listingType ?? "",
     page,
+    grouped: sp.grouped === "true",
   };
 }
 
@@ -109,6 +110,12 @@ export default async function InventoryPage({
   const listingFilters = toListingFilters(parsedFilters);
 
   const supabase = await createClient();
+
+  // Grouped mode fetches all matching listings (no pagination)
+  if (parsedFilters.grouped) {
+    listingFilters.page = 1;
+    listingFilters.pageSize = 500;
+  }
 
   const [{ listings, total, page, pageSize }, tabCounts, generationCounts, authResult] =
     await Promise.all([
