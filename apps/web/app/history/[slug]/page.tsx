@@ -14,6 +14,7 @@ import {
   getProductionStatsByGenerationId,
 } from "@dropthetop/shared";
 import { createClient } from "@/lib/supabase/server";
+import { GENERATION_HISTORY_IMAGES } from "@/lib/generation-images";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
@@ -91,7 +92,9 @@ export default async function GenerationDetailPage({
     .order("display_order", { ascending: true });
 
   const heroImageUrl =
-    dbImages?.find((img) => img.is_hero)?.image_url ?? generation.heroImage;
+    dbImages?.find((img) => img.is_hero)?.image_url ??
+    GENERATION_HISTORY_IMAGES[generation.id.toLowerCase()] ??
+    generation.heroImage;
   const galleryImages =
     dbImages && dbImages.filter((img) => !img.is_hero).length > 0
       ? dbImages.filter((img) => !img.is_hero).map((img) => img.image_url)

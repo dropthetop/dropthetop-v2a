@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BRAND, URLS, generations, buildGenerationUrl } from "@dropthetop/shared";
 import { createClient } from "@/lib/supabase/server";
+import { GENERATION_HISTORY_IMAGES } from "@/lib/generation-images";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
@@ -116,7 +117,10 @@ export default async function HistoryPage() {
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
               {generations.map((gen, index) => {
-                const cardImage = imageMap[gen.id.toLowerCase()] ?? gen.image;
+                const cardImage =
+                  imageMap[gen.id.toLowerCase()] ??
+                  GENERATION_HISTORY_IMAGES[gen.id.toLowerCase()] ??
+                  gen.image;
                 return (
                   <Link
                     key={gen.id}

@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { generations } from "@dropthetop/shared";
+import { GENERATION_CARD_IMAGES } from "@/lib/generation-images";
 import type { ListingCardData } from "@dropthetop/shared";
 
 export interface ParsedFilters {
@@ -299,7 +300,7 @@ export function InventoryClient({
                       )}
                     >
                       <img
-                        src={gen.image}
+                        src={GENERATION_CARD_IMAGES[gen.id.toLowerCase()] ?? gen.image}
                         alt={gen.name}
                         className="w-full h-full object-cover"
                       />
