@@ -119,6 +119,57 @@ function buildParams(f: ParsedFilters): string {
   return p.toString();
 }
 
+// ─── label maps (for reliable display without popup mounted) ─────────────────
+
+const SORT_LABELS: Record<string, string> = {
+  newest: "Newest First",
+  price_asc: "Price: Low to High",
+  price_desc: "Price: High to Low",
+  year_desc: "Year: Newest",
+  year_asc: "Year: Oldest",
+  mileage_asc: "Mileage: Lowest",
+};
+
+const SELLER_TYPE_LABELS: Record<string, string> = {
+  all: "All",
+  dealer: "Dealer",
+  private: "Private Owner",
+};
+
+const LISTING_TYPE_LABELS: Record<string, string> = {
+  all: "All",
+  internal: "DTT Original",
+  external: "External Listing",
+};
+
+const BODY_STYLE_LABELS: Record<string, string> = {
+  all: "All Body Styles",
+  convertible: "Convertible",
+  coupe: "Coupe",
+};
+
+const CONDITION_LABELS: Record<string, string> = {
+  all: "All",
+  new: "New",
+  used: "Used",
+};
+
+const USED_TYPE_LABELS: Record<string, string> = {
+  all: "All Used Types",
+  body_off_restored: "Body Off Restored",
+  daily_driver: "Daily Driver",
+  light_restored: "Light Restored",
+  project_car: "Project Car",
+  restomod: "Restomod",
+  survivor: "Survivor",
+};
+
+const TRANSMISSION_LABELS: Record<string, string> = {
+  all: "All",
+  automatic: "Automatic",
+  manual: "Manual",
+};
+
 // ─── component ───────────────────────────────────────────────────────────────
 
 export function InventoryClient({
@@ -261,6 +312,24 @@ export function InventoryClient({
                   <X className="w-4 h-4" />
                   Reset
                 </Button>
+                <Button
+                  variant={filters.grouped ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => push({ grouped: !filters.grouped, page: 1 }, false)}
+                  className="gap-2"
+                >
+                  {filters.grouped ? (
+                    <>
+                      <LayoutGrid className="w-4 h-4" />
+                      <span className="hidden sm:inline">Grid View</span>
+                    </>
+                  ) : (
+                    <>
+                      <Rows3 className="w-4 h-4" />
+                      <span className="hidden sm:inline">View by Generation</span>
+                    </>
+                  )}
+                </Button>
               </div>
 
               {/* Sort */}
@@ -268,8 +337,10 @@ export function InventoryClient({
                 value={filters.sort}
                 onValueChange={(v) => push({ sort: v ?? "newest" })}
               >
-                <SelectTrigger className="w-44 bg-input border-border h-9">
-                  <SelectValue />
+                <SelectTrigger className="min-w-40 bg-input border-border h-9">
+                  <span className="flex-1 text-left text-sm truncate">
+                    {SORT_LABELS[filters.sort] ?? "Newest First"}
+                  </span>
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="newest">Newest First</SelectItem>
@@ -359,7 +430,9 @@ export function InventoryClient({
                     <div className="space-y-1">
                       <Label className="text-xs uppercase tracking-wider text-muted-foreground">Seller Type</Label>
                       <Select value={filters.sellerType || "all"} onValueChange={(v) => push({ sellerType: v === "all" || !v ? "" : v })}>
-                        <SelectTrigger className="bg-input border-border h-9"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="w-full bg-input border-border h-9">
+                          <span className="flex-1 text-left text-sm truncate">{SELLER_TYPE_LABELS[filters.sellerType || "all"]}</span>
+                        </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All</SelectItem>
                           <SelectItem value="dealer">Dealer</SelectItem>
@@ -370,7 +443,9 @@ export function InventoryClient({
                     <div className="space-y-1">
                       <Label className="text-xs uppercase tracking-wider text-muted-foreground">Listing Type</Label>
                       <Select value={filters.listingType || "all"} onValueChange={(v) => push({ listingType: v === "all" || !v ? "" : v })}>
-                        <SelectTrigger className="bg-input border-border h-9"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="w-full bg-input border-border h-9">
+                          <span className="flex-1 text-left text-sm truncate">{LISTING_TYPE_LABELS[filters.listingType || "all"]}</span>
+                        </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All</SelectItem>
                           <SelectItem value="internal">DTT Original</SelectItem>
@@ -392,7 +467,9 @@ export function InventoryClient({
                     <div className="space-y-1">
                       <Label className="text-xs uppercase tracking-wider text-muted-foreground">Body Style</Label>
                       <Select value={filters.bodyStyle || "all"} onValueChange={(v) => push({ bodyStyle: v === "all" || !v ? "" : v })}>
-                        <SelectTrigger className="bg-input border-border h-9"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="w-full bg-input border-border h-9">
+                          <span className="flex-1 text-left text-sm truncate">{BODY_STYLE_LABELS[filters.bodyStyle || "all"]}</span>
+                        </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All Body Styles</SelectItem>
                           <SelectItem value="convertible">Convertible</SelectItem>
@@ -406,7 +483,9 @@ export function InventoryClient({
                         value={filters.condition || "all"}
                         onValueChange={(v) => push({ condition: v === "all" || !v ? "" : v, usedType: "" })}
                       >
-                        <SelectTrigger className="bg-input border-border h-9"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="w-full bg-input border-border h-9">
+                          <span className="flex-1 text-left text-sm truncate">{CONDITION_LABELS[filters.condition || "all"]}</span>
+                        </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All</SelectItem>
                           <SelectItem value="new">New</SelectItem>
@@ -423,8 +502,8 @@ export function InventoryClient({
                         onValueChange={(v) => push({ usedType: v === "all" || !v ? "" : v })}
                         disabled={filters.condition !== "used"}
                       >
-                        <SelectTrigger className={cn("bg-input border-border h-9", filters.condition !== "used" && "opacity-50 cursor-not-allowed")}>
-                          <SelectValue />
+                        <SelectTrigger className={cn("w-full bg-input border-border h-9", filters.condition !== "used" && "opacity-50 cursor-not-allowed")}>
+                          <span className="flex-1 text-left text-sm truncate">{USED_TYPE_LABELS[filters.usedType || "all"]}</span>
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All Used Types</SelectItem>
@@ -440,7 +519,9 @@ export function InventoryClient({
                     <div className="space-y-1">
                       <Label className="text-xs uppercase tracking-wider text-muted-foreground">Transmission</Label>
                       <Select value={filters.transmission || "all"} onValueChange={(v) => push({ transmission: v === "all" || !v ? "" : v })}>
-                        <SelectTrigger className="bg-input border-border h-9"><SelectValue /></SelectTrigger>
+                        <SelectTrigger className="w-full bg-input border-border h-9">
+                          <span className="flex-1 text-left text-sm truncate">{TRANSMISSION_LABELS[filters.transmission || "all"]}</span>
+                        </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="all">All</SelectItem>
                           <SelectItem value="automatic">Automatic</SelectItem>
@@ -553,33 +634,11 @@ export function InventoryClient({
             </div>
           </div>
 
-          {/* Results count + view toggle */}
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-muted-foreground">
-              {total} vehicle{total !== 1 ? "s" : ""} found
-              {!filters.grouped && totalPages > 1 && ` — page ${filters.page} of ${totalPages}`}
-            </p>
-            <Button
-              variant={filters.grouped ? "default" : "outline"}
-              size="sm"
-              onClick={() => push({ grouped: !filters.grouped, page: 1 }, false)}
-              className="gap-2"
-            >
-              {filters.grouped ? (
-                <>
-                  <LayoutGrid className="w-4 h-4" />
-                  <span className="hidden sm:inline">Grid View</span>
-                  <span className="sm:hidden">Grid</span>
-                </>
-              ) : (
-                <>
-                  <Rows3 className="w-4 h-4" />
-                  <span className="hidden sm:inline">View by Generation</span>
-                  <span className="sm:hidden">Generation</span>
-                </>
-              )}
-            </Button>
-          </div>
+          {/* Results count */}
+          <p className="text-muted-foreground mb-4">
+            {total} vehicle{total !== 1 ? "s" : ""} found
+            {!filters.grouped && totalPages > 1 && ` — page ${filters.page} of ${totalPages}`}
+          </p>
 
           {/* Listings */}
           {listings.length === 0 ? (
