@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from "lucide-react";
+import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -175,9 +176,14 @@ export function AuthForm() {
       <div className="relative w-full max-w-md">
         {/* Brand */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-display tracking-wider text-gradient mb-1">
-            {BRAND.name}
-          </h1>
+          <Image
+            src="/logo.png"
+            alt={BRAND.name}
+            width={200}
+            height={40}
+            className="h-16 w-auto mx-auto mb-4"
+            priority
+          />
           <p className="text-muted-foreground">{subtitle[mode]}</p>
         </div>
 
