@@ -91,10 +91,12 @@ export default async function GenerationDetailPage({
     .eq("generation_id", generation.id.toLowerCase())
     .order("display_order", { ascending: true });
 
+  const dbHeroUrl = dbImages?.find((img) => img.is_hero)?.image_url ?? null;
   const heroImageUrl =
-    dbImages?.find((img) => img.is_hero)?.image_url ??
+    dbHeroUrl ??
     GENERATION_HISTORY_IMAGES[generation.id.toLowerCase()] ??
     generation.heroImage;
+  const isLocalHero = !dbHeroUrl;
   const galleryImages =
     dbImages && dbImages.filter((img) => !img.is_hero).length > 0
       ? dbImages.filter((img) => !img.is_hero).map((img) => img.image_url)
@@ -135,7 +137,7 @@ export default async function GenerationDetailPage({
         <div style={{ height: "calc(4rem + var(--safe-area-top, 0px))" }} />
 
         {/* Hero */}
-        <section className="relative h-[70vh] flex items-end overflow-hidden">
+        <section className={`relative flex items-end overflow-hidden ${isLocalHero ? "h-[52vh]" : "h-[70vh]"}`}>
           <div className="absolute inset-0">
             <Image
               src={heroImageUrl}
