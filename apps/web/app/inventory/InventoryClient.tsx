@@ -463,7 +463,7 @@ export function InventoryClient({
                   <h4 className="text-xs uppercase tracking-wider text-accent mb-3 font-medium">
                     Vehicle Details
                   </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                     <div className="space-y-1">
                       <Label className="text-xs uppercase tracking-wider text-muted-foreground">Body Style</Label>
                       <Select value={filters.bodyStyle || "all"} onValueChange={(v) => push({ bodyStyle: v === "all" || !v ? "" : v })}>

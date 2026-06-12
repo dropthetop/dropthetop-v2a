@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Menu,
@@ -47,9 +48,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <span className="font-display text-2xl tracking-wider text-primary">
-              {BRAND.logoText}
-            </span>
+            <Image src="/logo.png" alt={BRAND.name} height={32} width={160} className="h-7 md:h-8 w-auto" priority />
           </Link>
 
           {/* Desktop Nav */}
