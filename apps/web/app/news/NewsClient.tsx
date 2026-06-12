@@ -144,7 +144,7 @@ export function NewsClient({ featured, articles }: NewsClientProps) {
             <Newspaper className="w-8 h-8 text-primary" />
             <h1 className="font-display text-4xl md:text-5xl">Corvette News</h1>
           </div>
-          <p className="text-lg text-muted-foreground max-w-2xl">
+          <p className="text-lg text-muted-foreground">
             Stay informed with the latest Corvette news, reviews, and announcements from top automotive sources.
           </p>
         </div>

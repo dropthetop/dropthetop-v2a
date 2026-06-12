@@ -278,7 +278,7 @@ export function InventoryClient({
           <h1 className="font-display text-5xl md:text-6xl lg:text-7xl mb-4">
             CORVETTE INVENTORY
           </h1>
-          <p className="text-muted-foreground max-w-2xl mb-6">
+          <p className="text-muted-foreground mb-6">
             Explore our curated selection of premium Corvettes. From classic C1s to the latest C8s,
             find your dream car today.
           </p>
