@@ -973,9 +973,10 @@ export function ListingDetailClient({
                         ? sellerTabLink("active", listing.managed_profile_id!, true)
                         : sellerTabLink("active", listing.seller_id, false)
                     }
-                    className="font-semibold hover:text-primary hover:underline transition-colors"
+                    className="inline-flex items-center gap-1 font-semibold text-primary hover:underline transition-colors"
                   >
                     {sellerName}
+                    <ExternalLink className="w-3.5 h-3.5 shrink-0 opacity-70" />
                   </Link>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <Badge
