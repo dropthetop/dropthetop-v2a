@@ -43,3 +43,6 @@ Feature conversion reads from v1 (`/Users/toddheemsoth/Documents/dropthetop-owne
 
 ## Conversion plan
 `CONVERSION_PLAN.md` (repo root) is the source of truth for phase status and conversion-specific decisions. Update it — moving phases from Remaining to Completed and advancing the NEXT marker — when each phase ships.
+
+## Backlog
+`BACKLOG.md` (repo root) is the living list of future ideas and deferred work. Add items there rather than to `CONVERSION_PLAN.md`.
