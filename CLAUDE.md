@@ -52,3 +52,11 @@ Feature conversion reads from v1 (`/Users/toddheemsoth/Documents/dropthetop-owne
 
 ## Omissions are decisions, not defaults
 When converting any v1 page or feature, if you choose not to carry over a v1 behavior — for any reason — say so explicitly at the time you make the decision, before completing the task. State what you are omitting and why. Do not silently skip v1 features and wait to be asked. The owner decides what gets dropped; you surface the choice.
+
+## Phase close-out gate
+Before marking any phase complete in CONVERSION_PLAN.md:
+1. **Re-read v1** — go back to the relevant v1 page(s) and feature(s) for that phase and compare them against what was built in v2a. Do this by actually reading v1 source files, not from memory.
+2. **Report omissions** — explicitly state "Here is what I chose not to carry over from v1 in this phase, and why," listing every omission found in that comparison.
+3. **Log gaps** — add any newly-found gaps to CONVERSION_GAPS.md with a proposed Category and Disposition for owner confirmation.
+
+A phase is not marked done in CONVERSION_PLAN.md until this comparison is complete and any gaps are logged. This complements — and does not replace — the existing rule to report omissions in the moment.
