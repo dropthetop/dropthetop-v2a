@@ -967,7 +967,16 @@ export function ListingDetailClient({
                   )}
                 </div>
                 <div>
-                  <p className="font-semibold">{sellerName}</p>
+                  <Link
+                    href={
+                      isManagedProfile
+                        ? sellerTabLink("active", listing.managed_profile_id!, true)
+                        : sellerTabLink("active", listing.seller_id, false)
+                    }
+                    className="font-semibold hover:text-primary hover:underline transition-colors"
+                  >
+                    {sellerName}
+                  </Link>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <Badge
                       variant={effectiveProfile?.is_dealer ? "default" : "outline"}
