@@ -125,7 +125,7 @@ Open FIX-BEFORE-DONE items only. Remove from this list when moved to Completed.
 - **Year Sales pricing**
   - v1 page/feature: `src/pages/YearSales.tsx` — admin tool to enter per-year average sale prices
   - Gap: v2a has no Year Sales admin tool; the History/Generation Detail "live price cards" have no data source
-  - Category: Deferred
+  - Category: Oversight
   - Disposition: FIX-BEFORE-DONE
 
 ## UX / Navigation
