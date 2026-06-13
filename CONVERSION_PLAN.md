@@ -21,6 +21,7 @@
 ### Remaining
 
 - **Phase 11** — Forum (index, thread view, bookmarks) ← **NEXT**
+- **Phase 13** — Remaining admin pages: Manage Users, Manage News, Fetch External Listings, Manage Lookups, External Links analytics, Launch Emails, Email Previews (all currently stubs)
 
 ---
 

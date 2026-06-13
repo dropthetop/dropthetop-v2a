@@ -49,3 +49,6 @@ Feature conversion reads from v1 (`/Users/toddheemsoth/Documents/dropthetop-owne
 
 ## Conversion gaps
 `CONVERSION_GAPS.md` (repo root) tracks features and behaviors v1 had that v2a doesn't yet implement — regressions, not new ideas. When working on a feature that corresponds to a gap entry, move it to the Completed section at the bottom of `CONVERSION_GAPS.md` when the gap is filled. When you discover a new v1 regression during implementation, add it there rather than to `BACKLOG.md`.
+
+## Omissions are decisions, not defaults
+When converting any v1 page or feature, if you choose not to carry over a v1 behavior — for any reason — say so explicitly at the time you make the decision, before completing the task. State what you are omitting and why. Do not silently skip v1 features and wait to be asked. The owner decides what gets dropped; you surface the choice.
