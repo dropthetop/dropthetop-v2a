@@ -362,6 +362,11 @@ export function AuthForm() {
                     }`}>
                       {strength.label}
                     </p>
+                    {strength.label !== "Strong" && (
+                      <p className="text-xs text-muted-foreground">
+                        Tip: add uppercase letters, numbers, or symbols to strengthen your password.
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
