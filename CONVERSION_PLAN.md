@@ -36,6 +36,10 @@ Deferred — revisit after core conversion is complete and live.
 - **robots.txt blocking all crawlers** — add before launch; remove/replace with permissive rules at go-live to allow indexing
 - **hCaptcha on sign-up form** — Supabase Auth has native hCaptcha support; enable in Supabase dashboard (Auth → Settings) + add widget to AuthForm. Free tier sufficient for current scale.
 - **Throwaway email domain blocklist** — client-side check on sign-up against a short blocklist (mailinator, guerrillamail, etc.) before submit; no package required.
+- **Admin analytics charts** — ViewsTrendChart (views over time) and ViewsByGenerationChart; stubbed as "coming soon" in Manage Listings. Requires Recharts and queries `listing_views` table.
+- **Per-listing inline views analytics in admin** — v1 renders a detailed clickable views breakdown on each listing row; v2a currently shows static `views_count` only.
+- **Admin state/scroll restoration** — persist active tab, search filters, and scroll position to `sessionStorage` so navigating back from a listing detail restores your exact position (v1 behavior).
+- **Listing expiry automation** — bulk check expired listings and trigger seller notification emails; v1 has `CheckEndedListingsModal` in admin for this workflow.
 
 ---
 
