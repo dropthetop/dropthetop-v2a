@@ -26,7 +26,20 @@ Living list of future ideas and deferred work. Add freely; nothing here is commi
 
 - **Admin analytics charts** — ViewsTrendChart (views over time) and ViewsByGenerationChart; currently stubbed as "coming soon" in Manage Listings. Requires Recharts and queries `listing_views` table.
 - **Per-listing inline views analytics in admin** — v1 renders a detailed clickable views breakdown on each listing row; v2a currently shows static `views_count` only.
-- **Admin state/scroll restoration** — persist active tab, search filters, and scroll position to `sessionStorage` so navigating back from a listing detail restores your exact position (v1 behavior).
+
+## Scroll & State Restoration (site-wide)
+
+v1 has a shared `useScrollRestoration` hook plus a `ScrollToTop` component that tracks route transitions and sets/clears `sessionStorage` flags. When a user navigates to a detail page and presses Back, the originating page restores its exact state. Pages affected and what each restores:
+
+| Page | What is saved |
+|---|---|
+| **Inventory** (`/inventory`) | Scroll position, per-generation carousel positions |
+| **Home** (`/`) | Scroll position, featured listings carousel position |
+| **Dashboard** (`/dashboard`) | Scroll position, active tab, search/filter state |
+| **Admin** (`/admin`) | Scroll position, active tab, search/filter state |
+| **History** (`/history`) | Scroll position (trigger: returning from a generation detail, not a listing detail) |
+
+Implementation note: v1's `ScrollToTop` component wraps the entire router and sets a `should-restore-scroll-{page}` flag before navigating away to a detail page; on return, each page reads that flag and re-applies saved state. The pattern is the same for all five pages — implement once as a shared hook and wire it into each.
 
 ## Infrastructure & Cleanup
 
