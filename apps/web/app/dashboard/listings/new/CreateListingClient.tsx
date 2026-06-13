@@ -55,6 +55,16 @@ export function CreateListingClient({ userId, lookups }: Props) {
 
   const selectedGeneration = watch("generation");
   const vehicleCondition = watch("vehicle_condition");
+  const watchedState = watch("location_state");
+
+  const generationLabel = selectedGeneration
+    ? generations.find((g) => g.id === selectedGeneration)
+      ? `${generations.find((g) => g.id === selectedGeneration)!.name} (${generations.find((g) => g.id === selectedGeneration)!.years})`
+      : selectedGeneration
+    : "";
+  const stateLabel = watchedState
+    ? (US_STATES.find((s) => s.value === watchedState)?.label ?? watchedState)
+    : "";
 
   // Fetch models when generation changes
   useEffect(() => {
@@ -212,7 +222,7 @@ export function CreateListingClient({ userId, lookups }: Props) {
               </Field>
               <Field label="Generation" error={errors.generation?.message} required>
                 <Select onValueChange={(v: string | null) => { setValue("generation", v ?? ""); setValue("model", null); }} disabled={submitting}>
-                  <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Select…">{generationLabel || undefined}</SelectValue></SelectTrigger>
                   <SelectContent>
                     {generations.map((g) => (
                       <SelectItem key={g.id} value={g.id}>{g.name} ({g.years})</SelectItem>
@@ -241,7 +251,7 @@ export function CreateListingClient({ userId, lookups }: Props) {
                   <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
                   <SelectContent>
                     {lookups.body_styles.map((b) => (
-                      <SelectItem key={b.id} value={b.id}>{b.display_name}</SelectItem>
+                      <SelectItem key={b.id} value={b.display_name}>{b.display_name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -257,7 +267,7 @@ export function CreateListingClient({ userId, lookups }: Props) {
                   <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
                   <SelectContent>
                     {lookups.transmissions.map((t) => (
-                      <SelectItem key={t.id} value={t.id}>{t.display_name}</SelectItem>
+                      <SelectItem key={t.id} value={t.display_name}>{t.display_name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -270,7 +280,7 @@ export function CreateListingClient({ userId, lookups }: Props) {
                   <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
                   <SelectContent>
                     {lookups.conditions.map((c) => (
-                      <SelectItem key={c.id} value={c.id}>{c.display_name}</SelectItem>
+                      <SelectItem key={c.id} value={c.display_name}>{c.display_name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -292,7 +302,7 @@ export function CreateListingClient({ userId, lookups }: Props) {
                   <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
                   <SelectContent>
                     {lookups.used_types.map((ut) => (
-                      <SelectItem key={ut.id} value={ut.id}>{ut.display_name}</SelectItem>
+                      <SelectItem key={ut.id} value={ut.display_name}>{ut.display_name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -367,7 +377,7 @@ export function CreateListingClient({ userId, lookups }: Props) {
               </Field>
               <Field label="State" error={errors.location_state?.message} required>
                 <Select onValueChange={(v: string | null) => setValue("location_state", v ?? "")} disabled={submitting}>
-                  <SelectTrigger><SelectValue placeholder="Select…" /></SelectTrigger>
+                  <SelectTrigger><SelectValue placeholder="Select…">{stateLabel || undefined}</SelectValue></SelectTrigger>
                   <SelectContent>
                     {US_STATES.map((s) => (
                       <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
