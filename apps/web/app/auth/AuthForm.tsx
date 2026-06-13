@@ -22,8 +22,8 @@ const loginSchema = z.object({
 const signupSchema = z
   .object({
     email: z.string().trim().email({ message: "Please enter a valid email address" }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-    confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
+    password: z.string().min(8, { message: "Password must be at least 8 characters" }),
+    confirmPassword: z.string().min(1, { message: "Please confirm your password" }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -43,6 +43,19 @@ const resetSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+function passwordStrength(pw: string): { score: number; label: string; color: string } {
+  if (!pw) return { score: 0, label: "", color: "" };
+  let score = 0;
+  if (pw.length >= 8)  score++;
+  if (pw.length >= 12) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  if (score <= 1) return { score, label: "Weak",   color: "bg-red-500" };
+  if (score <= 3) return { score, label: "Fair",   color: "bg-amber-500" };
+  return              { score, label: "Strong", color: "bg-green-500" };
+}
 
 type LoginFormData = z.infer<typeof loginSchema>;
 type SignupFormData = z.infer<typeof signupSchema>;
@@ -73,6 +86,8 @@ export function AuthForm() {
   const signupForm = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
+  const signupPassword = signupForm.watch("password", "");
+  const strength = passwordStrength(signupPassword);
   const forgotForm = useForm<ForgotFormData>({
     resolver: zodResolver(forgotSchema),
   });
@@ -328,6 +343,26 @@ export function AuthForm() {
                 </div>
                 {signupForm.formState.errors.password && (
                   <p className="text-destructive text-sm">{signupForm.formState.errors.password.message}</p>
+                )}
+                {signupPassword.length > 0 && (
+                  <div className="space-y-1">
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4].map((i) => (
+                        <div
+                          key={i}
+                          className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
+                            strength.score >= i ? strength.color : "bg-muted"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <p className={`text-xs font-medium ${
+                      strength.label === "Weak" ? "text-red-500" :
+                      strength.label === "Fair" ? "text-amber-500" : "text-green-500"
+                    }`}>
+                      {strength.label}
+                    </p>
+                  </div>
                 )}
               </div>
 
