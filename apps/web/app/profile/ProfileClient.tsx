@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import {
@@ -104,6 +105,7 @@ interface Props {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export function ProfileClient({ userId, userEmail, isVerified, profile: initialProfile }: Props) {
+  const router = useRouter();
   const [profile, setProfile] = useState<ProfileData>(
     initialProfile ?? {
       first_name: "",
@@ -202,6 +204,7 @@ export function ProfileClient({ userId, userEmail, isVerified, profile: initialP
       toast.error("Failed to save profile.");
     } else {
       toast.success("Profile updated.");
+      router.back();
     }
   };
 
@@ -244,10 +247,15 @@ export function ProfileClient({ userId, userEmail, isVerified, profile: initialP
               </Badge>
             )}
           </div>
-          <Button onClick={handleSave} disabled={saving} className="btn-racing gap-2">
-            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-            {saving ? "Saving…" : "Save Changes"}
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => router.back()} disabled={saving}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={saving} className="btn-racing gap-2">
+              {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+              {saving ? "Saving…" : "Save Changes"}
+            </Button>
+          </div>
         </div>
 
         <div className="space-y-6">
