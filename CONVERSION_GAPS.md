@@ -27,6 +27,10 @@ Ordered roughly by area, not priority.
   - v1 page/feature: `src/components/dashboard/ListingViewsAnalytics.tsx`, used in Dashboard seller listings tab
   - Gap: v1 showed sellers an Eye button per listing that opened a dialog with total/member/guest view counts and a timestamped activity log; v2a shows no view stats to sellers
 
+- **Real-time listing view counts**
+  - v1 page/feature: `src/hooks/use-listing-views.ts`, `trackListingView` called from ListingDetail; view data stored in `listing_views` table
+  - Gap: v1 tracked views on listing detail but the underlying data (total, member, guest counts) was never surfaced on the public listing detail page itself; a public-facing view counter is not yet implemented in v2a. Originally described as "live view counter on listing detail pages." v1 did NOT show a public-facing view counter on the listing detail page itself (views were tracked silently). However, v1 DID surface view analytics to sellers in the Dashboard (`ListingViewsAnalytics` component — an Eye button per listing showing total/member/guest counts + activity log). The adjacent seller dashboard gap is captured above as "Seller per-listing view analytics."
+
 ## Admin
 
 - **Listing expiry automation**
