@@ -19,6 +19,17 @@ const loginSchema = z.object({
   password: z.string().min(6, { message: "Password must be at least 6 characters" }),
 });
 
+const signupSchema = z
+  .object({
+    email: z.string().trim().email({ message: "Please enter a valid email address" }),
+    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+    confirmPassword: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
 const forgotSchema = z.object({
   email: z.string().trim().email({ message: "Please enter a valid email address" }),
 });
@@ -34,6 +45,7 @@ const resetSchema = z
   });
 
 type LoginFormData = z.infer<typeof loginSchema>;
+type SignupFormData = z.infer<typeof signupSchema>;
 type ForgotFormData = z.infer<typeof forgotSchema>;
 type ResetFormData = z.infer<typeof resetSchema>;
 type AuthMode = "login" | "signup" | "forgot" | "reset";
@@ -57,6 +69,9 @@ export function AuthForm() {
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
+  });
+  const signupForm = useForm<SignupFormData>({
+    resolver: zodResolver(signupSchema),
   });
   const forgotForm = useForm<ForgotFormData>({
     resolver: zodResolver(forgotSchema),
@@ -92,29 +107,36 @@ export function AuthForm() {
   const onLoginSubmit = async (data: LoginFormData) => {
     setIsSubmitting(true);
     try {
-      if (mode === "login") {
-        const { error } = await signIn(data.email, data.password);
-        if (error) {
-          toast.error(
-            error.message.includes("Invalid login credentials")
-              ? "Invalid credentials. Please check your email and password."
-              : error.message
-          );
-        } else {
-          handleSuccessRedirect();
-        }
+      const { error } = await signIn(data.email, data.password);
+      if (error) {
+        toast.error(
+          error.message.includes("Invalid login credentials")
+            ? "Invalid credentials. Please check your email and password."
+            : error.message
+        );
       } else {
-        const { error } = await signUp(data.email, data.password);
-        if (error) {
-          toast.error(
-            error.message.includes("User already registered")
-              ? "An account with this email already exists. Please sign in instead."
-              : error.message
-          );
-        } else {
-          toast.success("Account created! Check your email to confirm your address.");
-          handleSuccessRedirect();
-        }
+        handleSuccessRedirect();
+      }
+    } catch {
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const onSignupSubmit = async (data: SignupFormData) => {
+    setIsSubmitting(true);
+    try {
+      const { error } = await signUp(data.email, data.password);
+      if (error) {
+        toast.error(
+          error.message.includes("User already registered")
+            ? "An account with this email already exists. Please sign in instead."
+            : error.message
+        );
+      } else {
+        toast.success("Account created! Check your email to confirm your address.");
+        handleSuccessRedirect();
       }
     } catch {
       toast.error("An unexpected error occurred. Please try again.");
@@ -190,8 +212,8 @@ export function AuthForm() {
         {/* Card */}
         <div className="glass-card rounded-lg p-8 glow-primary">
 
-          {/* Login / Signup */}
-          {(mode === "login" || mode === "signup") && (
+          {/* Login */}
+          {mode === "login" && (
             <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-foreground/80 uppercase tracking-wider text-xs">
@@ -236,14 +258,102 @@ export function AuthForm() {
                 {loginForm.formState.errors.password && (
                   <p className="text-destructive text-sm">{loginForm.formState.errors.password.message}</p>
                 )}
-                {mode === "login" && (
+                <button
+                  type="button"
+                  onClick={() => setMode("forgot")}
+                  className="text-sm text-accent hover:text-foreground transition-colors"
+                >
+                  Forgot Password?
+                </button>
+              </div>
+
+              <Button type="submit" disabled={isSubmitting} className="w-full btn-racing h-12 text-lg">
+                {isSubmitting ? (
+                  <span className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                    Signing in...
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    Sign In
+                    <ArrowRight className="w-5 h-5" />
+                  </span>
+                )}
+              </Button>
+            </form>
+          )}
+
+          {/* Sign Up */}
+          {mode === "signup" && (
+            <form onSubmit={signupForm.handleSubmit(onSignupSubmit)} className="space-y-6">
+              <div className="space-y-2">
+                <Label htmlFor="signup-email" className="text-foreground/80 uppercase tracking-wider text-xs">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    placeholder="you@example.com"
+                    className="pl-10 bg-input border-border focus:border-primary"
+                    {...signupForm.register("email")}
+                  />
+                </div>
+                {signupForm.formState.errors.email && (
+                  <p className="text-destructive text-sm">{signupForm.formState.errors.email.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="signup-password" className="text-foreground/80 uppercase tracking-wider text-xs">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    id="signup-password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    className="pl-10 pr-10 bg-input border-border focus:border-primary"
+                    {...signupForm.register("password")}
+                  />
                   <button
                     type="button"
-                    onClick={() => setMode("forgot")}
-                    className="text-sm text-accent hover:text-foreground transition-colors"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Forgot Password?
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
+                </div>
+                {signupForm.formState.errors.password && (
+                  <p className="text-destructive text-sm">{signupForm.formState.errors.password.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="signup-confirm-password" className="text-foreground/80 uppercase tracking-wider text-xs">
+                  Confirm Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    id="signup-confirm-password"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    className="pl-10 pr-10 bg-input border-border focus:border-primary"
+                    {...signupForm.register("confirmPassword")}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+                {signupForm.formState.errors.confirmPassword && (
+                  <p className="text-destructive text-sm">{signupForm.formState.errors.confirmPassword.message}</p>
                 )}
               </div>
 
@@ -251,11 +361,11 @@ export function AuthForm() {
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
                     <div className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                    {mode === "login" ? "Signing in..." : "Creating account..."}
+                    Creating account...
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
-                    {mode === "login" ? "Sign In" : "Create Account"}
+                    Create Account
                     <ArrowRight className="w-5 h-5" />
                   </span>
                 )}
