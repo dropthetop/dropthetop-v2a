@@ -29,7 +29,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/client";
-import { BRAND, URLS, buildListingUrl } from "@dropthetop/shared";
+import { BRAND, buildListingUrl } from "@dropthetop/shared";
 import { ContactSellerDialog } from "@/components/listings/ContactSellerDialog";
 import { MakeOfferDialog } from "@/components/listings/MakeOfferDialog";
 
@@ -309,7 +309,7 @@ export function ListingDetailClient({
 
   const handleShare = async () => {
     if (!listing.stock_number) return;
-    const shareUrl = `${URLS.website}${buildListingUrl(listing.stock_number, listing.year, listing.generation, listing.title)}`;
+    const shareUrl = `${window.location.origin}${buildListingUrl(listing.stock_number, listing.year, listing.generation, listing.title)}`;
     if (navigator.share) {
       try {
         await navigator.share({ title: listing.title, url: shareUrl });
