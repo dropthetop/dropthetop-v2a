@@ -33,6 +33,7 @@ Deferred — revisit after core conversion is complete and live.
 - GA4 event tracking (port `analytics.ts` to client-side calls)
 - Sitemap generation (edge function exists; expose as Next.js route or leave as-is)
 - Mobile app (separate Expo/React Native app importing `packages/shared`)
+- **robots.txt blocking all crawlers** — add before launch; remove/replace with permissive rules at go-live to allow indexing
 - **hCaptcha on sign-up form** — Supabase Auth has native hCaptcha support; enable in Supabase dashboard (Auth → Settings) + add widget to AuthForm. Free tier sufficient for current scale.
 - **Throwaway email domain blocklist** — client-side check on sign-up against a short blocklist (mailinator, guerrillamail, etc.) before submit; no package required.
 
