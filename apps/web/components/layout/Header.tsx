@@ -11,6 +11,7 @@ import {
   User,
   LayoutDashboard,
   PlusCircle,
+  Bell,
 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -21,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNotificationCount } from "@/hooks/useNotificationCount";
 import { BRAND } from "@dropthetop/shared";
 
 const NAV_LINKS = [
@@ -35,6 +37,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, signOut } = useAuth();
   const router = useRouter();
+  const notificationCount = useNotificationCount(user);
 
   const handleSignOut = async () => {
     await signOut();
@@ -74,6 +77,15 @@ export default function Header() {
             </Link>
 
             {user ? (
+              <div className="flex items-center gap-1">
+                <Link href="/dashboard" className="relative p-2 rounded-md hover:bg-accent/10 transition-colors">
+                  <Bell className="w-5 h-5" />
+                  {notificationCount > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 bg-primary text-primary-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-semibold">
+                      {notificationCount > 9 ? "9+" : notificationCount}
+                    </span>
+                  )}
+                </Link>
               <DropdownMenu>
                 <DropdownMenuTrigger
                   className={buttonVariants({ variant: "outline", size: "icon" })}
@@ -109,6 +121,7 @@ export default function Header() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              </div>
             ) : (
               <Link href="/auth">
                 <Button variant="outline" className="uppercase tracking-wider text-xs lg:text-sm">
