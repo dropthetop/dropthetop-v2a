@@ -337,7 +337,7 @@ export function InventoryClient({
                 value={filters.sort}
                 onValueChange={(v) => push({ sort: v ?? "newest" })}
               >
-                <SelectTrigger className="min-w-40 bg-input border-border h-9">
+                <SelectTrigger className="w-auto min-w-40 bg-input border-border h-9">
                   <span className="flex-1 text-left text-sm truncate">
                     {SORT_LABELS[filters.sort] ?? "Newest First"}
                   </span>

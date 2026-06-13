@@ -66,7 +66,7 @@ export default async function DashboardPage() {
   const { data: myOffers } = await supabase
     .from("offers")
     .select(
-      "id, amount, status, message, rejection_reason, approval_message, created_at, listing_id, listings(id, title, year, price, listing_images(image_url, is_primary, display_order))"
+      "id, amount, status, message, rejection_reason, approval_message, created_at, listing_id, listings(id, title, year, price, seller_id, listing_images(image_url, is_primary, display_order))"
     )
     .eq("buyer_id", user.id)
     .order("created_at", { ascending: false })
@@ -82,6 +82,41 @@ export default async function DashboardPage() {
     .order("created_at", { ascending: false })
     .limit(50);
 
+  // ── batch profile lookup ───────────────────────────────────────────────────
+  // Collect all unique profile IDs needed across offers and messages in one query
+  const allProfileIds = new Set<string>();
+  (offersReceived ?? []).forEach((o) => { if (o.buyer_id) allProfileIds.add(o.buyer_id); });
+  (myOffers ?? []).forEach((o) => { if ((o.listings as any)?.seller_id) allProfileIds.add((o.listings as any).seller_id); });
+  (messages ?? []).forEach((m) => {
+    if (m.sender_id) allProfileIds.add(m.sender_id);
+    if (m.recipient_id) allProfileIds.add(m.recipient_id);
+  });
+
+  let profileMap: Record<string, { first_name: string | null; last_name: string | null }> = {};
+  if (allProfileIds.size > 0) {
+    const { data: profileRows } = await supabase
+      .from("profiles")
+      .select("id, first_name, last_name")
+      .in("id", [...allProfileIds]);
+    profileMap = Object.fromEntries((profileRows ?? []).map((p) => [p.id, p]));
+  }
+
+  const offersReceivedEnriched = (offersReceived ?? []).map((o) => ({
+    ...o,
+    buyer_profile: o.buyer_id ? (profileMap[o.buyer_id] ?? null) : null,
+  }));
+
+  const myOffersEnriched = (myOffers ?? []).map((o) => ({
+    ...o,
+    seller_profile: (o.listings as any)?.seller_id ? (profileMap[(o.listings as any).seller_id] ?? null) : null,
+  }));
+
+  const messagesEnriched = (messages ?? []).map((m) => ({
+    ...m,
+    sender_profile: m.sender_id ? (profileMap[m.sender_id] ?? null) : null,
+    recipient_profile: m.recipient_id ? (profileMap[m.recipient_id] ?? null) : null,
+  }));
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -90,9 +125,9 @@ export default async function DashboardPage() {
         profile={profile ?? null}
         myListings={(myListings ?? []) as any[]}
         favorites={(favRows ?? []) as any[]}
-        offersReceived={(offersReceived ?? []) as any[]}
-        myOffers={(myOffers ?? []) as any[]}
-        messages={(messages ?? []) as any[]}
+        offersReceived={offersReceivedEnriched as any[]}
+        myOffers={myOffersEnriched as any[]}
+        messages={messagesEnriched as any[]}
       />
       <Footer />
     </div>

@@ -36,6 +36,15 @@ import { buildListingUrl } from "@dropthetop/shared";
 
 // ─── helpers ─────────────────────────────────────────────────────────────────
 
+function formatDisplayName(
+  profile: { first_name: string | null; last_name: string | null } | null | undefined,
+  fallback = "Unknown"
+): string {
+  if (!profile) return fallback;
+  const parts = [profile.first_name, profile.last_name].filter(Boolean);
+  return parts.length > 0 ? parts.join(" ") : fallback;
+}
+
 function formatPrice(p: number) {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -585,6 +594,9 @@ export function DashboardClient({
                           <div className="flex-1 min-w-0">
                             <p className="text-xs text-muted-foreground mb-0.5">{listing?.title ?? "Unknown listing"}</p>
                             <p className="font-display text-2xl text-accent">{formatPrice(offer.amount)}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5">
+                              From: <span className="font-medium text-foreground/80">{formatDisplayName(offer.buyer_profile)}</span>
+                            </p>
                             {offer.message && (
                               <p className="text-muted-foreground text-sm mt-1 italic">"{offer.message}"</p>
                             )}
@@ -650,6 +662,9 @@ export function DashboardClient({
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-semibold truncate">{listing?.title ?? "Unknown listing"}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            To: <span className="font-medium text-foreground/80">{formatDisplayName(offer.seller_profile)}</span>
+                          </p>
                           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                             <span className="text-accent font-semibold text-sm">{formatPrice(offer.amount)}</span>
                             <span className={`text-xs px-2 py-0.5 rounded border ${statusInfo.color}`}>
@@ -707,6 +722,11 @@ export function DashboardClient({
                                   New
                                 </span>
                               )}
+                              <span className="text-xs text-muted-foreground">
+                                {isReceived
+                                  ? formatDisplayName(msg.sender_profile)
+                                  : `To: ${formatDisplayName(msg.recipient_profile)}`}
+                              </span>
                               <span className="text-xs text-muted-foreground">
                                 {formatDate(msg.created_at)}
                               </span>
