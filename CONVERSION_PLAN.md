@@ -16,11 +16,11 @@
 - **Phase 8** — Static/legal pages (About/Mission, Privacy, Terms) + custom 404
 - **Phase 9** — Seller & Dealer public profiles (`/seller/[sellerId]`, `/dealer/[dealerId]`) + ContactSeller & MakeOffer dialogs on listing detail
 - **Phase 10** — Dashboard + Create/Edit listing (image upload to Supabase Storage, mark-as-sold toggle, snapshot before approved edits)
+- **Phase 12** — Admin section: layout, nav, Manage Listings with full v1 feature parity (approve/reject/feature/delete, expiration editor, listing history, change diff viewer, realtime views counter, stat cards). Year Sales pricing deferred to `BACKLOG.md`.
 
 ### Remaining
 
 - **Phase 11** — Forum (index, thread view, bookmarks) ← **NEXT**
-- **Phase 12** — Admin section (+ Year Sales pricing that feeds history page live price cards)
 
 ---
 

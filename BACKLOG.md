@@ -26,6 +26,7 @@ Living list of future ideas and deferred work. Add freely; nothing here is commi
 
 - **Admin analytics charts** — ViewsTrendChart (views over time) and ViewsByGenerationChart; currently stubbed as "coming soon" in Manage Listings. Requires Recharts and queries `listing_views` table.
 - **Per-listing inline views analytics in admin** — v1 renders a detailed clickable views breakdown on each listing row; v2a currently shows static `views_count` only.
+- **Year Sales pricing** — admin tool to input per-year average sale prices that feed the live price cards on the History/Generation Detail pages. Was part of Phase 12 scope; deferred.
 
 ## Scroll & State Restoration (site-wide)
 
