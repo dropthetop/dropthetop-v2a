@@ -55,3 +55,9 @@ Ordered roughly by area, not priority.
   - v1 page/feature: `src/hooks/use-scroll-restoration.ts` + `src/components/ScrollToTop.tsx`, wired to 5 pages
   - Gap: v2a has none of this; navigating Back from a listing/generation detail always lands at the top of the page with no filter/tab state restored
   - Pages affected: Inventory (scroll + carousel positions), Home (scroll + carousel), Dashboard (scroll + active tab + filters), Admin (scroll + active tab + filters), History (scroll, triggered by generation detail)
+
+---
+
+## Completed
+
+<!-- Move entries here (with a one-line "Closed:" note) when the gap is filled. -->
