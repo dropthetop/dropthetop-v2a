@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import {
@@ -25,11 +24,14 @@ import {
   LogIn,
   Gavel,
   Timer,
+  DollarSign,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { createClient } from "@/lib/supabase/client";
 import { BRAND, URLS, buildListingUrl } from "@dropthetop/shared";
+import { ContactSellerDialog } from "@/components/listings/ContactSellerDialog";
+import { MakeOfferDialog } from "@/components/listings/MakeOfferDialog";
 
 // ─── types ─────────────────────────────────────────────────────────────────
 
@@ -220,7 +222,6 @@ export function ListingDetailClient({
   backParams,
   pageUrl,
 }: Props) {
-  const router = useRouter();
   const titleSectionRef = useRef<HTMLDivElement>(null);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -228,6 +229,8 @@ export function ListingDetailClient({
   const [showStickyBar, setShowStickyBar] = useState(false);
   const [iframeLoading, setIframeLoading] = useState(true);
   const [iframeError, setIframeError] = useState(false);
+  const [contactSellerOpen, setContactSellerOpen] = useState(false);
+  const [makeOfferOpen, setMakeOfferOpen] = useState(false);
 
   // Sticky bar
   useEffect(() => {
@@ -335,12 +338,13 @@ export function ListingDetailClient({
   } else if (from === "dashboard") {
     backPath = "/dashboard";
     backLabel = "Back to My Dashboard";
-  } else if (from === "seller" && sellerId) {
+  } else if ((from === "seller" || from === "dealer") && sellerId) {
     const p = new URLSearchParams();
     if (fromListing) p.set("fromListing", fromListing);
     if (inventoryFilters) p.set("inventoryFilters", inventoryFilters);
-    backPath = `/seller/${sellerId}${p.toString() ? `?${p}` : ""}`;
-    backLabel = "Back to Seller Listings";
+    const base = from === "dealer" ? `/dealer/${sellerId}` : `/seller/${sellerId}`;
+    backPath = `${base}${p.toString() ? `?${p}` : ""}`;
+    backLabel = from === "dealer" ? "Back to Dealer Listings" : "Back to Seller Listings";
   } else if (from === "inventory") {
     backPath = filters ? `/inventory?${filters}` : "/inventory";
   } else if (inventoryFilters) {
@@ -380,20 +384,33 @@ export function ListingDetailClient({
     return `${base}?${p}`;
   }
 
-  // ── contact seller ───────────────────────────────────────────────────────────
-  // Full dialog deferred to Phase 8. Show auth-gate or placeholder for now.
-  const handleContactSeller = () => {
-    if (!userId) {
-      router.push(`/auth?redirect=/inventory/${listing.stock_number}`);
-      return;
-    }
-    toast.info("Contact seller — coming soon.");
-  };
 
   // ── render ───────────────────────────────────────────────────────────────────
 
+  // Seller id for dialogs — always the profiles.id (not managed_profile)
+  const dialogSellerId = listing.seller_id;
+
   return (
     <>
+      {/* Dialogs */}
+      <ContactSellerDialog
+        open={contactSellerOpen}
+        onOpenChange={setContactSellerOpen}
+        listingId={listing.id}
+        sellerId={dialogSellerId}
+        listingTitle={listing.title}
+      />
+      {listing.negotiable && (
+        <MakeOfferDialog
+          open={makeOfferOpen}
+          onOpenChange={setMakeOfferOpen}
+          listingId={listing.id}
+          sellerId={dialogSellerId}
+          listingTitle={listing.title}
+          askingPrice={listing.price}
+        />
+      )}
+
       {/* Sticky Price Bar */}
       <div
         className={`fixed left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border transition-all duration-300 ${
@@ -1055,11 +1072,11 @@ export function ListingDetailClient({
                 </div>
               </div>
 
-              {/* Contact seller button — auth-gated; dialog in Phase 8 */}
+              {/* Contact / Make Offer buttons */}
               {!isOwner && !isExternalListing && (
                 <div className="flex gap-3 mt-4 pt-4 border-t border-border">
                   <Button
-                    onClick={handleContactSeller}
+                    onClick={() => setContactSellerOpen(true)}
                     className="flex-1 gap-2 btn-racing min-w-0"
                   >
                     {!userId ? (
@@ -1074,6 +1091,16 @@ export function ListingDetailClient({
                       </>
                     )}
                   </Button>
+                  {listing.negotiable && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setMakeOfferOpen(true)}
+                      className="flex-1 gap-2 border-accent text-accent hover:bg-accent/10 min-w-0"
+                    >
+                      <DollarSign className="w-4 h-4 shrink-0" />
+                      <span className="truncate">Make Offer</span>
+                    </Button>
+                  )}
                 </div>
               )}
             </div>
