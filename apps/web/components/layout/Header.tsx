@@ -12,6 +12,7 @@ import {
   LayoutDashboard,
   PlusCircle,
   Bell,
+  ShieldCheck,
 } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -23,6 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNotificationCount } from "@/hooks/useNotificationCount";
+import { useAdminRole } from "@/hooks/useAdminRole";
 import { BRAND } from "@dropthetop/shared";
 
 const NAV_LINKS = [
@@ -38,6 +40,7 @@ export default function Header() {
   const { user, signOut } = useAuth();
   const router = useRouter();
   const notificationCount = useNotificationCount(user);
+  const { isAdmin } = useAdminRole(user);
 
   const handleSignOut = async () => {
     await signOut();
@@ -111,6 +114,15 @@ export default function Header() {
                     <User className="w-4 h-4 mr-2" />
                     My Profile
                   </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem
+                      onClick={() => router.push("/admin")}
+                      className="cursor-pointer text-primary"
+                    >
+                      <ShieldCheck className="w-4 h-4 mr-2" />
+                      Admin Panel
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleSignOut}
@@ -179,6 +191,14 @@ export default function Header() {
                         My Profile
                       </Button>
                     </Link>
+                    {isAdmin && (
+                      <Link href="/admin" onClick={() => setMobileMenuOpen(false)}>
+                        <Button variant="outline" className="w-full uppercase tracking-wider text-primary border-primary/40">
+                          <ShieldCheck className="w-4 h-4 mr-2" />
+                          Admin Panel
+                        </Button>
+                      </Link>
+                    )}
                     <Button
                       variant="outline"
                       className="w-full uppercase tracking-wider"
