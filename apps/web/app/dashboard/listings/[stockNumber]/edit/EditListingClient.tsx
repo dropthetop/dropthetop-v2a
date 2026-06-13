@@ -441,9 +441,8 @@ export function EditListingClient({ userId, listing, lookups }: Props) {
                 >
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {lookups.vehicle_conditions.map((vc) => (
-                      <SelectItem key={vc.id} value={vc.id}>{vc.display_name}</SelectItem>
-                    ))}
+                    <SelectItem value="used">Used</SelectItem>
+                    <SelectItem value="new">New</SelectItem>
                   </SelectContent>
                 </Select>
               </Field>

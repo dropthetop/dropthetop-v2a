@@ -279,9 +279,8 @@ export function CreateListingClient({ userId, lookups }: Props) {
                 <Select defaultValue="used" onValueChange={(v: string | null) => setValue("vehicle_condition", (v ?? "used") as "new" | "used")} disabled={submitting}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {lookups.vehicle_conditions.map((vc) => (
-                      <SelectItem key={vc.id} value={vc.id}>{vc.display_name}</SelectItem>
-                    ))}
+                    <SelectItem value="used">Used</SelectItem>
+                    <SelectItem value="new">New</SelectItem>
                   </SelectContent>
                 </Select>
               </Field>
