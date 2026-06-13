@@ -33,7 +33,6 @@ export default async function DashboardPage() {
       "id, title, price, year, generation, stock_number, status, is_sold, is_bid_to, rejection_reason, expiration_date, created_at, listing_images(image_url, is_primary, display_order)"
     )
     .eq("seller_id", user.id)
-    .is("managed_profile_id", null)
     .order("created_at", { ascending: false })
     .limit(100);
 

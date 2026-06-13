@@ -37,7 +37,6 @@ export default async function EditListingPage({
     )
     .eq("stock_number", stockNum)
     .eq("seller_id", user.id)
-    .is("managed_profile_id", null)
     .maybeSingle();
 
   if (!listing) notFound();
