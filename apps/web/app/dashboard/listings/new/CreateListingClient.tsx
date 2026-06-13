@@ -56,6 +56,7 @@ export function CreateListingClient({ userId, lookups }: Props) {
   const selectedGeneration = watch("generation");
   const vehicleCondition = watch("vehicle_condition");
   const watchedState = watch("location_state");
+  const vehicleConditionLabel = vehicleCondition === "new" ? "New" : vehicleCondition === "used" ? "Used" : "";
 
   const generationLabel = selectedGeneration
     ? generations.find((g) => g.id === selectedGeneration)
@@ -287,7 +288,7 @@ export function CreateListingClient({ userId, lookups }: Props) {
               </Field>
               <Field label="New / Used" error={errors.vehicle_condition?.message} required>
                 <Select defaultValue="used" onValueChange={(v: string | null) => setValue("vehicle_condition", (v ?? "used") as "new" | "used")} disabled={submitting}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger><SelectValue>{vehicleConditionLabel || "Used"}</SelectValue></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="used">Used</SelectItem>
                     <SelectItem value="new">New</SelectItem>

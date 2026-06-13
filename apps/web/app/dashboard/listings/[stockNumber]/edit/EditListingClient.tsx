@@ -120,6 +120,7 @@ export function EditListingClient({ userId, listing, lookups }: Props) {
   const selectedGeneration = watch("generation");
   const vehicleCondition = watch("vehicle_condition");
   const watchedState = watch("location_state");
+  const vehicleConditionLabel = vehicleCondition === "new" ? "New" : vehicleCondition === "used" ? "Used" : "";
 
   const generationLabel = selectedGeneration
     ? generations.find((g) => g.id === selectedGeneration)
@@ -449,7 +450,7 @@ export function EditListingClient({ userId, listing, lookups }: Props) {
                   onValueChange={(v: string | null) => setValue("vehicle_condition", (v ?? "used") as "new" | "used")}
                   disabled={submitting}
                 >
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectTrigger><SelectValue>{vehicleConditionLabel || (listing.vehicle_condition === "new" ? "New" : "Used")}</SelectValue></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="used">Used</SelectItem>
                     <SelectItem value="new">New</SelectItem>
