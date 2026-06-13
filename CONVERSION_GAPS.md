@@ -41,11 +41,13 @@ Open FIX-BEFORE-DONE items only. Remove from this list when moved to Completed.
   - Gap: v2a's listing detail page never calls any edge function when a listing is visited; the `listing_views` table never populates, making seller view analytics and all admin analytics permanently empty
   - Category: Oversight
   - Disposition: FIX-BEFORE-DONE
+
 - **[NEW] News article view tracking**
   - v1 page/feature: `src/hooks/use-news-views.ts`, called when a news article is opened
   - Gap: v2a never writes to the `news_article_views` table; article view counts are always zero
   - Category: Oversight
   - Disposition: DEFER-POST-LAUNCH
+
 - **Anonymous session + fingerprint analytics**
   - v1 page/feature: `src/hooks/use-fingerprint-analytics.ts`, `src/components/admin/FingerprintTrackingAnalytics.tsx`
   - Gap: v1 tracked non-authenticated visitors via browser fingerprint + session ID and surfaced deduplication stats in admin; v2a does not track anonymous sessions at all
@@ -59,6 +61,7 @@ Open FIX-BEFORE-DONE items only. Remove from this list when moved to Completed.
   - Gap: v1 showed a glass-card banner at page bottom with Accept/Decline; GA4 was gated behind acceptance (never loaded until user accepted); persistence in localStorage; v2a has no cookie consent layer at all
   - Category: Re-implement
   - Disposition: FIX-BEFORE-DONE
+
 ## External Link Tracking
 
 - **[NEW] External link tracking system**
@@ -66,11 +69,13 @@ Open FIX-BEFORE-DONE items only. Remove from this list when moved to Completed.
   - Gap: v1 generated a session ID, recorded every click to an external listing (dealer, listing ID, user auth status), tracked whether the user skipped or signed up, and completed signup tracking (user ID + email) on registration; v2a has none of this conversion funnel tracking
   - Category: Re-implement
   - Disposition: DEFER-POST-LAUNCH
+
 - **[NEW] External listing signup prompt**
   - v1 page/feature: `src/pages/ListingDetail.tsx` — dialog shown to unauthenticated users before leaving for an external listing URL
   - Gap: v1 intercepted the external link click for non-authenticated users and showed a benefits modal (save favorites, alerts, community) with a sign-up CTA; v2a shows a direct link with no interstitial
   - Category: Re-implement
   - Disposition: DEFER-POST-LAUNCH
+
 ## Dashboard
 
 - **Seller per-listing view analytics**
@@ -90,11 +95,13 @@ Open FIX-BEFORE-DONE items only. Remove from this list when moved to Completed.
   - Gap: v1 let sellers filter their listings by status (all, approved, pending, active, sold, expired, rejected, bid_to); v2a shows all listings in a flat unfiltered list
   - Category: Oversight
   - Disposition: FIX-BEFORE-DONE
+
 - **[NEW] Messages tab sub-tabs and filters**
   - v1 page/feature: `src/pages/Dashboard.tsx` — messages tab with received/sent sub-tabs, user filter, and vehicle filter
   - Gap: v1 had sub-tabs (All / Received / Sent) and dropdowns to filter by sender/recipient and vehicle; v2a shows a flat unfiltered message list
   - Category: Oversight
   - Disposition: DEFER-POST-LAUNCH
+
 ## Admin
 
 - **Listing expiry automation**
