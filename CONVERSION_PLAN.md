@@ -24,6 +24,10 @@
 
 ---
 
+## Conversion gaps
+
+Features and behaviors v1 had that v2a does not yet implement are tracked in `CONVERSION_GAPS.md` at the repo root. These are regressions from v1 — not new ideas — and should be closed before considering the conversion complete.
+
 ## Post-launch / Future work
 
 See `BACKLOG.md` at the repo root.
