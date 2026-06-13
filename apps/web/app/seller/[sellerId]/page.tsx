@@ -69,18 +69,19 @@ async function getSellerData(sellerId: string) {
   if (!profile) return null;
 
   // Fetch listings in parallel
-  const base = supabase
-    .from("listings")
-    .select(LISTING_SELECT)
-    .eq("seller_id", sellerId)
-    .eq("status", "approved")
-    .eq("is_external_listing", false)
-    .order("created_at", { ascending: false });
+  const q = () =>
+    supabase
+      .from("listings")
+      .select(LISTING_SELECT)
+      .eq("seller_id", sellerId)
+      .eq("status", "approved")
+      .eq("is_external_listing", false)
+      .order("created_at", { ascending: false });
 
   const [activeRes, bidToRes, soldRes] = await Promise.all([
-    base.eq("is_sold", false).neq("is_bid_to", true),
-    base.eq("is_sold", false).eq("is_bid_to", true),
-    base.eq("is_sold", true),
+    q().eq("is_sold", false).neq("is_bid_to", true),
+    q().eq("is_sold", false).eq("is_bid_to", true),
+    q().eq("is_sold", true),
   ]);
 
   return {

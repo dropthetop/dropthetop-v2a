@@ -74,17 +74,18 @@ async function getDealerData(dealerId: string) {
 
   if (!dealer) return null;
 
-  const base = supabase
-    .from("listings")
-    .select(LISTING_SELECT)
-    .eq("managed_profile_id", dealerId)
-    .eq("status", "approved")
-    .order("created_at", { ascending: false });
+  const q = () =>
+    supabase
+      .from("listings")
+      .select(LISTING_SELECT)
+      .eq("managed_profile_id", dealerId)
+      .eq("status", "approved")
+      .order("created_at", { ascending: false });
 
   const [activeRes, bidToRes, soldRes] = await Promise.all([
-    base.eq("is_sold", false).neq("is_bid_to", true),
-    base.eq("is_sold", false).eq("is_bid_to", true),
-    base.eq("is_sold", true),
+    q().eq("is_sold", false).neq("is_bid_to", true),
+    q().eq("is_sold", false).eq("is_bid_to", true),
+    q().eq("is_sold", true),
   ]);
 
   return {
