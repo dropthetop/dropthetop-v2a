@@ -41,6 +41,9 @@ All work on `develop`. `main` is the stable deployable baseline — only merge w
 ## v1 source of truth
 Feature conversion reads from v1 (`/Users/toddheemsoth/Documents/dropthetop-owned`) directly by absolute path — sibling folders on disk. No cloning, no pasting. Do not modify v1. Never read from or copy v2 (`dropthetop-v2`).
 
+## Vision
+`VISION.md` (repo root) is the strategic source of truth for what this product is and why — the North Star above the build. Read it when making decisions that touch product direction, scope, or architectural priorities. It is iterated deliberately; significant strategic changes should be reasoned through, not casually edited.
+
 ## Conversion plan
 `CONVERSION_PLAN.md` (repo root) is the source of truth for phase status and conversion-specific decisions. Update it — moving phases from Remaining to Completed and advancing the NEXT marker — when each phase ships.
 
