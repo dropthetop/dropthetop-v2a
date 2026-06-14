@@ -80,3 +80,10 @@ Garage / Showcase depth: featured cars / car-of-the-month; galleries; activity f
 Knowledge layer depth: editorial expansion; richer cross-linking; user-contributed content; deeper content/SEO strategy.
 Mobile app: separate React Native/Expo app sharing packages/shared (per CLAUDE.md); post-web-launch, once the platform is proven.
 Seeding via aggregation: pending legal/permission research (see Strategic context).
+
+Relationship to other docs
+
+VISION.md (this) — strategic "what and why," the North Star.
+CONVERSION_PLAN.md — current build status (v1 → v2a conversion).
+CLAUDE.md — governing technical rules.
+BACKLOG.md — future ideas; pillar-deepening v2/v3 features accumulate here.
