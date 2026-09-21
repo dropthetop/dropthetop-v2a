@@ -76,6 +76,16 @@ Notes on the tooling:
 - `supabase db pull`/`db dump` (re-syncing from remote — e.g. if someone makes a manual dashboard change instead of writing a migration) and `supabase start` (optional local Postgres sandbox) both need Docker Desktop running locally.
 - There's still no rollback tooling — reverting a bad migration means writing and applying a new migration that undoes it, not an automatic "down" migration.
 
+Tracked migrations matter beyond just applying schema day-to-day — they get used:
+
+1. **Production launch** — replaying the full migration history against the new, empty production Supabase project is how it gets the same schema as dev/staging, instead of manually recreating it.
+2. **Every ongoing feature between now and launch** — not deferred to launch; each schema change gets its own migration file and is applied to `Drop-the-Top-v2` as it's built.
+3. **Rebuilding or forking dev/staging** — if `Drop-the-Top-v2` ever needs to be recreated or a second dev project spun up, migrations reconstruct the exact schema instead of relying on dashboard history or memory.
+4. **Local Postgres, if adopted later** — `supabase start` (Docker) builds a local database by replaying the same migration files, so local matches remote exactly.
+5. **Onboarding a second developer** — anyone new can stand up a schema-accurate environment from the migration files alone.
+6. **Audit trail / debugging** — "when did this column get added, and why" becomes answerable from a filename and its SQL, not guesswork.
+7. **Mobile app later** — `packages/shared`'s generated DB types come from the schema; a clean migration history makes schema/type changes easier to reason about as the Expo app starts consuming `@dropthetop/shared`.
+
 ## Path to a production environment
 
 Today, "production" (the `main` branch / Vercel Production deployment) still points at the same Supabase project as dev/staging (`Drop-the-Top-v2`). That's intentional during conversion — see `CONVERSION_PLAN.md` — but it means `main` is not yet a fully isolated production environment. Per `CLAUDE.md` and the project memory, going to a real production setup means:

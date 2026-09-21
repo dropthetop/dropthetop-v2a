@@ -40,14 +40,7 @@ supabase/            # Supabase CLI project link (migrations live in the Supabas
 - **Supabase** for Postgres, Auth, and Storage. Dev/staging project `Drop-the-Top-v2` (`cdnmwwcuwbgpzcrklmbn`); production project not yet provisioned. `supabase/` holds the CLI project link.
 - Schema changes go through the Supabase CLI/dashboard, not ad hoc — and never without explicit approval (`CLAUDE.md`).
 - Two server-side client flavors in `apps/web/lib/supabase/server.ts`: a cookie-scoped client (RLS-respecting, per-user) and an admin client (service-role key) for privileged server actions.
-- **Schema changes are tracked as migration files** in `supabase/migrations/` (Supabase CLI), committed to git alongside the app code that depends on them, rather than applied ad hoc with nothing recorded. See `DEV_ENVIRONMENT.md` for the day-to-day workflow. Tracked migrations matter beyond just applying schema — they get used:
-  1. **Production launch** — replaying the full migration history against the new, empty production Supabase project is how it gets the same schema as dev/staging, instead of manually recreating it.
-  2. **Every ongoing feature between now and launch** — not deferred to launch; each schema change gets its own migration file and is applied to `Drop-the-Top-v2` as it's built.
-  3. **Rebuilding or forking dev/staging** — if `Drop-the-Top-v2` ever needs to be recreated or a second dev project spun up, migrations reconstruct the exact schema instead of relying on dashboard history or memory.
-  4. **Local Postgres, if adopted later** — `supabase start` (Docker) builds a local database by replaying the same migration files, so local matches remote exactly.
-  5. **Onboarding a second developer** — anyone new can stand up a schema-accurate environment from the migration files alone.
-  6. **Audit trail / debugging** — "when did this column get added, and why" becomes answerable from a filename and its SQL, not guesswork.
-  7. **Mobile app later** — `packages/shared`'s generated DB types come from the schema; a clean migration history makes schema/type changes easier to reason about as the Expo app starts consuming `@dropthetop/shared`.
+- **Schema changes are tracked as migration files** in `supabase/migrations/` (Supabase CLI), committed to git alongside the app code that depends on them, rather than applied ad hoc with nothing recorded. See `DEV_ENVIRONMENT.md`'s "Schema changes" section for the day-to-day workflow and why tracked migrations matter beyond just applying schema.
 
 ## Third-party integrations
 
