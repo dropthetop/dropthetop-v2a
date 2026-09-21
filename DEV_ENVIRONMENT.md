@@ -57,6 +57,13 @@ Standard flow, nothing repo-specific beyond "work on `develop`":
 4. When ready to release, merge `develop` into `main` (PR or direct merge, per your preference) and push `main`. That push triggers the Vercel Production build.
 5. Nothing here runs database migrations automatically — schema stays entirely manual and requires explicit approval, independent of what gets deployed to Vercel.
 
+   Concretely:
+   - There's no `supabase/config.toml` or `supabase/migrations/` directory tracked in this repo — only `supabase/.temp/linked-project.json`, which just points the local `supabase` CLI at the `Drop-the-Top-v2` project for convenience (e.g. `supabase db pull`, generating types). It isn't a migration history.
+   - No script, GitHub Action, or Vercel build step ever runs `supabase db push`, applies a `.sql` file, or otherwise touches schema. Vercel's build only runs `pnpm build` — it builds and ships application code, nothing database-related.
+   - The only way schema changes today is a person manually running SQL — via the Supabase dashboard's SQL editor, or the `supabase` CLI against the linked project — and per `CLAUDE.md`, that requires explicit user approval every time, no exceptions.
+   - Practical consequence: **code deploys and schema changes are two fully decoupled events.** Pushing to `main`/`develop` never changes the database, and changing the database never triggers a redeploy. That means it's possible to ship application code that expects a column/table that doesn't exist yet (or vice versa) if the two aren't sequenced deliberately — so when a feature needs a schema change, get it applied *before* merging the code that depends on it, not after.
+   - This is also why there's no rollback story for schema today: an approved SQL change is a one-way door unless someone manually writes and applies the reverse SQL. Worth revisiting (tracked migration files + `supabase db push` in CI) once schema changes become frequent enough to need one — not needed yet at this stage.
+
 There is no GitHub Actions CI in this repo today (no `.github/workflows`), so **Vercel's build is the only automated gate** — a failed `pnpm build` (typecheck/lint errors that fail the build) blocks the deployment but doesn't block the git push/merge itself.
 
 ## Path to a production environment
