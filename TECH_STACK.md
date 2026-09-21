@@ -49,6 +49,21 @@ supabase/            # Supabase CLI project link (migrations live in the Supabas
   6. **Audit trail / debugging** — "when did this column get added, and why" becomes answerable from a filename and its SQL, not guesswork.
   7. **Mobile app later** — `packages/shared`'s generated DB types come from the schema; a clean migration history makes schema/type changes easier to reason about as the Expo app starts consuming `@dropthetop/shared`.
 
+## Third-party integrations
+
+All four live inside **Supabase Edge Functions** (Deno, deployed to the Supabase project) — `apps/web` never calls these services directly and doesn't hold their credentials. It calls the edge function, which holds the API key server-side. All are already deployed and `ACTIVE` on `Drop-the-Top-v2` (`supabase functions list`), carried over from v1.
+
+- **Firecrawl** — web scraping/JS-rendering for pulling data from external sites. Used by `fetch-external-listings`, `fetch-listing-preview`, `fetch-external-images`, `scrape-corvette-news`. Env var: `FIRECRAWL_API_KEY`.
+- **Resend** — transactional email (approvals, offers, messages, listing notifications). Used by `send-email`. Env var: `RESEND_API_KEY`.
+- **OpenAI** (`gpt-4o-mini` + image generation) — AI summaries for scraped news articles, plus `scrape-corvette-sales`, `generate-article-image`, `generate-app-icon`. Env var: `OPENAI_API_KEY`.
+- **Google Analytics (GA4)** — the edge function `get-ga4-config` exists and is deployed, but per `CONVERSION_GAPS.md` the app-side GA4 instrumentation itself is **not yet wired into `apps/web`** — this is deployed infrastructure without a caller yet. Env var: `GA4_MEASUREMENT_ID`.
+
+**Where the env vars live:** these four are Supabase **Edge Function secrets** (`supabase secrets list` / `supabase secrets set`), scoped per-project — a completely separate mechanism from `apps/web`'s `.env.local` (which only holds the three Supabase client vars) and separate from `supabase/migrations/` (secrets are not schema; `db push` never touches them). Confirmed currently set on `Drop-the-Top-v2`: `FIRECRAWL_API_KEY`, `GA4_MEASUREMENT_ID`, `OPENAI_API_KEY`, `RESEND_API_KEY` (alongside Supabase's own auto-injected `SUPABASE_URL`/`SUPABASE_ANON_KEY`/etc., which every function gets for free and never need manual setup).
+
+**Production implication:** when the dedicated production Supabase project is provisioned (see `DEV_ENVIRONMENT.md`), these four secrets need to be set again on that project explicitly — `supabase link`-ing to it and `db push`-ing migrations brings the schema over, but **not** edge function secrets or the functions themselves (those need `supabase functions deploy` + `supabase secrets set` separately). Worth its own `BACKLOG.md` item once production provisioning gets closer.
+
+**Planned, not yet live:** hCaptcha (Supabase Auth's native integration) is tracked in `BACKLOG.md` under Auth & Security — not enabled yet, no secret configured.
+
 ## Rejected alternatives (don't revisit without a strong new reason)
 
 | Option | Why rejected |
