@@ -18,4 +18,5 @@ Living list of future ideas and deferred work. Add freely; nothing here is commi
 
 - **Production database provisioning** — production Supabase project not yet created; provision at launch
 - **Mobile app** — separate Expo/React Native app that imports `packages/shared` as a dependency; does not live in this monorepo
+- **Pin down `@dropthetop/shared` dependency mechanism for mobile** — decide how the separate Expo app will consume the package (published to an internal/private registry, git dependency, `file:`/tarball reference, etc.); see TECH_STACK.md's "Path to native iOS/Android" section
 
