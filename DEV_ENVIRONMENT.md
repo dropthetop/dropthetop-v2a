@@ -17,8 +17,9 @@ Vercel  ──build & deploy──▶  apps/web  ──queries──▶  Supabas
   - `apps/web/vercel.json` overrides the install step to `cd ../../ && pnpm install` — Vercel's default install runs from the Root Directory, but pnpm workspaces need to resolve from the monorepo root, so this walks back up before installing.
   - Build command: `pnpm build` (→ `next build`). Output: `.next`.
   - Standard Vercel behavior (not something configured in this repo) is that pushes to the branch marked **Production** in the Vercel dashboard deploy to the production URL, and every other branch/PR gets its own **Preview** deployment URL. Based on the branch roles below, `main` is expected to be the Production branch and `develop` (and any feature branches) produce Preview deployments — confirm this in the Vercel dashboard if you need to be sure, since it isn't captured in a repo file.
-- **Supabase** — `supabase/.temp/linked-project.json` links the local Supabase CLI to project `Drop-the-Top-v2` (ID `cdnmwwcuwbgpzcrklmbn`), currently doing double duty as both dev and staging. `apps/web` talks to it purely through environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) — there's no hardcoded project reference in application code. Vercel holds its own copy of these env vars (set in the Vercel dashboard), separate from your local `.env.local`.
-- There is no committed `supabase/migrations` directory — schema changes are made directly against the linked project (dashboard or `supabase` CLI commands), not via tracked migration files. Per `CLAUDE.md`, **never run migrations or alter schema without explicit approval.**
+- **Supabase** — the Supabase CLI is linked to project `Drop-the-Top-v2` (ID `cdnmwwcuwbgpzcrklmbn`), currently doing double duty as both dev and staging. `apps/web` talks to it purely through environment variables (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) — there's no hardcoded project reference in application code. Vercel holds its own copy of these env vars (set in the Vercel dashboard), separate from your local `.env.local`.
+- **Schema changes are tracked as migration files** in `supabase/migrations/`, committed to the repo — not applied ad hoc. See "Schema changes" under Committing and pushing below. Per `CLAUDE.md`, **never run migrations or alter schema without explicit approval**, regardless of whether it's tracked in a file.
+- **Docker Desktop is required locally** for `supabase db pull`/`db dump` (schema diffing) and for optional local Postgres (`supabase start`) — not for the day-to-day `migration new` / `db push` workflow, which connects to the database directly.
 
 ## Local setup
 
@@ -55,22 +56,31 @@ Standard flow, nothing repo-specific beyond "work on `develop`":
 2. Commit in small, incremental chunks per logical change/phase — not one giant commit at the end (see `CLAUDE.md` phase workflow).
 3. `git push` — this alone triggers a Vercel Preview build for that branch. No separate deploy command; Vercel's GitHub integration handles it.
 4. When ready to release, merge `develop` into `main` (PR or direct merge, per your preference) and push `main`. That push triggers the Vercel Production build.
-5. Nothing here runs database migrations automatically — schema stays entirely manual and requires explicit approval, independent of what gets deployed to Vercel.
-
-   Concretely:
-   - There's no `supabase/config.toml` or `supabase/migrations/` directory tracked in this repo — only `supabase/.temp/linked-project.json`, which just points the local `supabase` CLI at the `Drop-the-Top-v2` project for convenience (e.g. `supabase db pull`, generating types). It isn't a migration history.
-   - No script, GitHub Action, or Vercel build step ever runs `supabase db push`, applies a `.sql` file, or otherwise touches schema. Vercel's build only runs `pnpm build` — it builds and ships application code, nothing database-related.
-   - The only way schema changes today is a person manually running SQL — via the Supabase dashboard's SQL editor, or the `supabase` CLI against the linked project — and per `CLAUDE.md`, that requires explicit user approval every time, no exceptions.
-   - Practical consequence: **code deploys and schema changes are two fully decoupled events.** Pushing to `main`/`develop` never changes the database, and changing the database never triggers a redeploy. That means it's possible to ship application code that expects a column/table that doesn't exist yet (or vice versa) if the two aren't sequenced deliberately — so when a feature needs a schema change, get it applied *before* merging the code that depends on it, not after.
-   - This is also why there's no rollback story for schema today: an approved SQL change is a one-way door unless someone manually writes and applies the reverse SQL. Worth revisiting (tracked migration files + `supabase db push` in CI) once schema changes become frequent enough to need one — not needed yet at this stage.
+5. Database schema changes are never part of a code deploy — they're a separate, deliberate step (below), sequenced by hand relative to the code push, not triggered by it.
 
 There is no GitHub Actions CI in this repo today (no `.github/workflows`), so **Vercel's build is the only automated gate** — a failed `pnpm build` (typecheck/lint errors that fail the build) blocks the deployment but doesn't block the git push/merge itself.
+
+### Schema changes
+
+`supabase/config.toml` and `supabase/migrations/` are tracked in the repo, starting from `20260921141908_baseline_schema.sql` — a full snapshot of `Drop-the-Top-v2`'s schema at the time tracking was set up, generated via `supabase db pull` after reconciling ~120 pre-existing (untracked) entries in the remote's own migration-history bookkeeping table with `supabase migration repair`.
+
+Going forward, when a feature needs a schema change:
+
+1. `supabase migration new <description>` creates a new timestamped file under `supabase/migrations/`.
+2. Write the SQL in that file. Commit it to `develop` alongside the application code that depends on it — schema and the code that needs it should land together, not schema-after-the-fact.
+3. Get explicit approval, then apply it with `supabase db push` against the linked `Drop-the-Top-v2` project. **This step is still gated exactly like before**, per `CLAUDE.md` — tracking migrations in files changes what's recorded, not who can pull the trigger; nothing pushes schema automatically, and no Vercel build step touches the database.
+4. Nothing here runs database migrations automatically — schema stays a manual, explicitly-approved step, independent of what gets deployed to Vercel. Code deploys and schema changes remain two decoupled events: pushing to `main`/`develop` never changes the database, and running `db push` never triggers a redeploy. So when a feature needs a schema change, get it applied *before* merging the code that depends on it, not after.
+
+Notes on the tooling:
+- `supabase migration new` and `supabase db push` connect directly to the database — no Docker needed for the routine workflow.
+- `supabase db pull`/`db dump` (re-syncing from remote — e.g. if someone makes a manual dashboard change instead of writing a migration) and `supabase start` (optional local Postgres sandbox) both need Docker Desktop running locally.
+- There's still no rollback tooling — reverting a bad migration means writing and applying a new migration that undoes it, not an automatic "down" migration.
 
 ## Path to a production environment
 
 Today, "production" (the `main` branch / Vercel Production deployment) still points at the same Supabase project as dev/staging (`Drop-the-Top-v2`). That's intentional during conversion — see `CONVERSION_PLAN.md` — but it means `main` is not yet a fully isolated production environment. Per `CLAUDE.md` and the project memory, going to a real production setup means:
 
-1. **Provision a dedicated production Supabase project** (tracked in `BACKLOG.md`) — a fresh project, schema migrated over from `Drop-the-Top-v2` (its own Auth users, its own Storage buckets), created only at actual launch, not before.
+1. **Provision a dedicated production Supabase project** (tracked in `BACKLOG.md`) — a fresh, empty project, created only at actual launch, not before. With migrations now tracked, getting it to the same schema as `Drop-the-Top-v2` is `supabase link` to the new project + `supabase db push` to replay every file in `supabase/migrations/` in order, rather than manually recreating the schema. Auth users and Storage buckets still start empty and are a separate concern from schema.
 2. **Point Vercel's Production environment env vars** (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` on the Production environment specifically, distinct from Preview/Development env vars in the Vercel dashboard) at the new production Supabase project, while Preview deployments (`develop`, feature branches) keep pointing at `Drop-the-Top-v2` as dev/staging.
 3. **Confirm/set the Vercel Production branch to `main`** and the production domain, if not already configured that way.
 4. Continue treating a `develop` → `main` merge as the release gate — once step 2 is done, that merge is what actually ships to real users against real data, so the "only merge when ship-ready" rule in `CLAUDE.md` starts carrying real weight.
